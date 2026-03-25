@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Clearance – KCS | Kakamega High School</title>
+  <meta name="description" content="Track your clearance status across all departments at Kakamega High School.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/assets/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="kcs-wrapper">
+
+  <!-- Navbar -->
+  <nav class="kcs-nav">
+    <div class="container">
+      <div class="kcs-nav-inner">
+        <a class="kcs-logo" href="#">
+          <div class="kcs-logo-badge">KCS</div>
+          <div class="kcs-logo-text">
+            <span class="kcs-logo-title">KCS Clearance</span>
+            <span class="kcs-logo-sub">Kakamega High School</span>
+          </div>
+        </a>
+        <div class="kcs-nav-actions">
+          <span id="studentName" style="font-size:13px;color:var(--text-muted);"></span>
+          <a href="/pages/feedback.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs" id="feedbackNavBtn" style="display:none;">💬 Feedback</a>
+          <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="kcs-page-header">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <div>
+          <h1 class="kcs-page-title">My Clearance</h1>
+          <p class="kcs-page-subtitle">Submit a request and track department-level approvals in real time.</p>
+        </div>
+        <div id="requestActions">
+          <button id="submitBtn" class="btn-kcs btn-primary-kcs" type="button">
+            📋 Submit Clearance Request
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Overview Card -->
+    <div class="kcs-card mb-20" id="statusOverviewCard">
+      <div class="kcs-card-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:10px;">Overall Clearance Status</div>
+            <div id="overallStatusPill" class="clearance-status-pill none">⬜ Not Requested</div>
+          </div>
+          <div id="submittedAtWrap" style="display:none;">
+            <div style="font-size:12px;color:var(--text-muted);">Submitted</div>
+            <div id="submittedAt" style="font-size:14px;font-weight:600;color:var(--text-secondary);"></div>
+          </div>
+        </div>
+
+        <!-- Progress bars -->
+        <div id="progressWrap" style="display:none;margin-top:24px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:12px;color:var(--text-muted);">Approved</span>
+                <span id="approvedPct" style="font-size:12px;font-weight:700;color:#34d399;">0%</span>
+              </div>
+              <div class="kcs-progress-track">
+                <div id="approvedBar" class="kcs-progress-fill kcs-progress-success" style="width:0%;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:12px;color:var(--text-muted);">Pending</span>
+                <span id="pendingPct" style="font-size:12px;font-weight:700;color:#fbbf24;">0%</span>
+              </div>
+              <div class="kcs-progress-track">
+                <div id="pendingBar" class="kcs-progress-fill kcs-progress-warning" style="width:0%;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:12px;color:var(--text-muted);">Rejected</span>
+                <span id="rejectedPct" style="font-size:12px;font-weight:700;color:#f87171;">0%</span>
+              </div>
+              <div class="kcs-progress-track">
+                <div id="rejectedBar" class="kcs-progress-fill kcs-progress-danger" style="width:0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Progress Table -->
+    <div class="kcs-card mb-20">
+      <div class="kcs-card-header">
+        <h2 class="kcs-section-title" style="margin-bottom:0;">Department Progress</h2>
+        <span id="lastRefreshed" style="font-size:12px;color:var(--text-muted);"></span>
+      </div>
+      <div class="kcs-card-body" style="padding-top:0;">
+        <div id="loadingDept" class="kcs-spinner"></div>
+
+        <div id="noRequestMsg" style="display:none;">
+          <div class="kcs-empty">
+            <div class="kcs-empty-icon">📋</div>
+            <div class="kcs-empty-title">No clearance request yet</div>
+            <div class="kcs-empty-text">Click "Submit Clearance Request" above to begin your clearance process.</div>
+          </div>
+        </div>
+
+        <div id="statusTableWrap" style="display:none;">
+          <div class="kcs-table-wrap">
+            <table class="kcs-table">
+              <thead>
+                <tr>
+                  <th>Department</th>
+                  <th>Status</th>
+                  <th>Last Updated</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="statusTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback CTA (shown when Cleared) -->
+    <div id="feedbackCtaWrap" style="display:none;" class="mb-20">
+      <div class="kcs-card" style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(79,70,229,0.08));border-color:rgba(16,185,129,0.25);">
+        <div class="kcs-card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div style="font-size:22px;margin-bottom:6px;">🎉 Congratulations! You're fully cleared.</div>
+            <div style="font-size:14px;color:var(--text-secondary);">A confirmation email has been sent. Please take a moment to share your experience.</div>
+          </div>
+          <a class="btn-kcs btn-success-kcs" href="/pages/feedback.html">Leave Feedback →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info note -->
+    <div style="font-size:12px;color:var(--text-muted);text-align:center;padding-bottom:32px;">
+      📧 Email notifications are sent automatically after full clearance approval.
+    </div>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+  function computeProgress(statuses) {
+    const total = statuses.length || 1;
+    let approved = 0, pending = 0, rejected = 0;
+    for (const s of statuses) {
+      if (s.status === 'Approved') approved++;
+      else if (s.status === 'Rejected') rejected++;
+      else pending++;
+    }
+    return {
+      total,
+      approvedPct: Math.round((approved / total) * 100),
+      pendingPct:  Math.round((pending  / total) * 100),
+      rejectedPct: Math.round((rejected / total) * 100),
+    };
+  }
+
+  const pillMap = {
+    'Cleared':    { cls: 'cleared',  icon: '✅', label: 'Cleared' },
+    'Pending':    { cls: 'pending',  icon: '⏳', label: 'Pending' },
+    'Rejected':   { cls: 'rejected', icon: '❌', label: 'Rejected' },
+  };
+
+  async function refresh() {
+    document.getElementById('loadingDept').style.display = 'block';
+    document.getElementById('statusTableWrap').style.display = 'none';
+    document.getElementById('noRequestMsg').style.display = 'none';
+    document.getElementById('feedbackCtaWrap').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
+
+    const res  = await apiGet('/api/student/clearance-status');
+    const data = res.data;
+
+    document.getElementById('loadingDept').style.display = 'none';
+    document.getElementById('lastRefreshed').textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+    const pill = document.getElementById('overallStatusPill');
+
+    if (!data) {
+      pill.className = 'clearance-status-pill none';
+      pill.textContent = '⬜ Not Requested';
+      document.getElementById('noRequestMsg').style.display = 'block';
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submittedAtWrap').style.display = 'none';
+      return;
+    }
+
+    const piInfo = pillMap[data.overall_status] || { cls: 'none', icon: '○', label: data.overall_status };
+    pill.className = 'clearance-status-pill ' + piInfo.cls;
+    pill.textContent = piInfo.icon + ' ' + piInfo.label;
+
+    document.getElementById('submittedAt').textContent = data.submitted_at || '';
+    document.getElementById('submittedAtWrap').style.display = 'block';
+
+    const statuses = data.statuses || [];
+    const prog     = computeProgress(statuses);
+
+    document.getElementById('progressWrap').style.display = 'block';
+    document.getElementById('approvedBar').style.width    = prog.approvedPct + '%';
+    document.getElementById('pendingBar').style.width     = prog.pendingPct  + '%';
+    document.getElementById('rejectedBar').style.width    = prog.rejectedPct + '%';
+    document.getElementById('approvedPct').textContent    = prog.approvedPct + '%';
+    document.getElementById('pendingPct').textContent     = prog.pendingPct  + '%';
+    document.getElementById('rejectedPct').textContent    = prog.rejectedPct + '%';
+
+    const tbody = document.getElementById('statusTbody');
+    tbody.innerHTML = '';
+    for (const s of statuses) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span style="font-weight:600;color:var(--text-primary);">${s.department_name}</span></td>
+        <td>${statusBadge(s.status)}</td>
+        <td style="font-size:13px;">${s.updated_at || '—'}</td>
+        <td style="font-size:13px;color:var(--text-muted);">${s.rejection_reason || '—'}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+    document.getElementById('statusTableWrap').style.display = 'block';
+    document.getElementById('submitBtn').disabled = true;
+
+    if (data.overall_status === 'Cleared') {
+      document.getElementById('feedbackCtaWrap').style.display = 'block';
+      document.getElementById('feedbackNavBtn').style.display = '';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCsrfToken();
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      try {
+        await apiPost('/api/student/request-clearance', {});
+        await refresh();
+      } catch (e) {
+        alert(e.message || 'Failed to submit request. Please try again.');
+        btn.disabled = false;
+        btn.textContent = '📋 Submit Clearance Request';
+      }
+    });
+
+    try {
+      await refresh();
+    } catch (e) {
+      alert('Session expired. Please login again.');
+      window.location.href = '/pages/login.html';
+    }
+  });
+</script>
+</body>
+</html>

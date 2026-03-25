@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard – KCS | Kakamega High School</title>
+  <meta name="description" content="System-wide clearance progress and feedback analytics for administrators.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/assets/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="kcs-wrapper">
+
+  <!-- Navbar -->
+  <nav class="kcs-nav">
+    <div class="container">
+      <div class="kcs-nav-inner">
+        <a class="kcs-logo" href="#">
+          <div class="kcs-logo-badge">KCS</div>
+          <div class="kcs-logo-text">
+            <span class="kcs-logo-title">KCS Clearance</span>
+            <span class="kcs-logo-sub">Admin Portal</span>
+          </div>
+        </a>
+        <div class="kcs-nav-actions">
+          <a href="/pages/admin-management.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">⚙️ Manage</a>
+          <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="kcs-page-header">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h1 class="kcs-page-title">Admin Dashboard</h1>
+          <p class="kcs-page-subtitle">System-wide clearance progress and student feedback analytics.</p>
+        </div>
+        <button class="btn-kcs btn-ghost-kcs btn-sm-kcs" onclick="loadAll()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- System-wide stat cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;" id="summaryStats">
+      <div class="kcs-stat-card">
+        <div class="kcs-stat-icon brand">🏢</div>
+        <div><div class="kcs-stat-value" id="totalDepts">—</div><div class="kcs-stat-label">Departments</div></div>
+      </div>
+      <div class="kcs-stat-card">
+        <div class="kcs-stat-icon warning">⏳</div>
+        <div><div class="kcs-stat-value" id="totalPending">—</div><div class="kcs-stat-label">Pending</div></div>
+      </div>
+      <div class="kcs-stat-card">
+        <div class="kcs-stat-icon success">✅</div>
+        <div><div class="kcs-stat-value" id="totalApproved">—</div><div class="kcs-stat-label">Approved</div></div>
+      </div>
+      <div class="kcs-stat-card">
+        <div class="kcs-stat-icon danger">❌</div>
+        <div><div class="kcs-stat-value" id="totalRejected">—</div><div class="kcs-stat-label">Rejected</div></div>
+      </div>
+    </div>
+
+    <!-- Department Chart -->
+    <div class="kcs-card mb-20">
+      <div class="kcs-card-header">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0;">Department Progress — Pending / Approved / Rejected</h2>
+        <span id="updatedAt" style="font-size:12px;color:var(--text-muted);"></span>
+      </div>
+      <div class="kcs-card-body">
+        <div class="kcs-chart-wrap"><canvas id="adminChart" height="160"></canvas></div>
+
+        <div style="margin-top:20px;">
+          <div id="loadingDepts" class="kcs-spinner"></div>
+          <div id="deptTableWrap" style="display:none;">
+            <div class="kcs-table-wrap">
+              <table class="kcs-table">
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Pending</th>
+                    <th>Approved</th>
+                    <th>Rejected</th>
+                    <th>Total</th>
+                    <th>Progress</th>
+                  </tr>
+                </thead>
+                <tbody id="deptTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Analytics -->
+    <div class="kcs-card mb-20">
+      <div class="kcs-card-header">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0;">Feedback Analytics</h2>
+      </div>
+      <div class="kcs-card-body">
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;margin-bottom:24px;" id="feedbackSummaryGrid">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:24px;text-align:center;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:8px;">Average Rating</div>
+            <div id="avgRating" style="font-size:48px;font-weight:800;background:var(--gradient-brand);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;">—</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">out of 5.0</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:24px;">
+            <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:16px;">Rating Distribution</div>
+            <div id="ratingBarsWrap" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </div>
+
+        <div class="kcs-divider"></div>
+        <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:16px;">Recent Student Comments</div>
+        <div id="commentsWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+  let chartInstance = null;
+
+  async function loadAdmin() {
+    document.getElementById('loadingDepts').style.display = 'block';
+    document.getElementById('deptTableWrap').style.display = 'none';
+
+    const res = await apiGet('/api/admin/dashboard-progress');
+    const departments = res.departments || [];
+
+    document.getElementById('totalDepts').textContent    = departments.length;
+    document.getElementById('totalPending').textContent  = departments.reduce((a,d) => a + Number(d.pending_cnt  || 0), 0);
+    document.getElementById('totalApproved').textContent = departments.reduce((a,d) => a + Number(d.approved_cnt || 0), 0);
+    document.getElementById('totalRejected').textContent = departments.reduce((a,d) => a + Number(d.rejected_cnt || 0), 0);
+    document.getElementById('updatedAt').textContent     = 'Updated ' + new Date().toLocaleTimeString();
+
+    const labels   = departments.map(d => d.department_name);
+    const pending  = departments.map(d => Number(d.pending_cnt  || 0));
+    const approved = departments.map(d => Number(d.approved_cnt || 0));
+    const rejected = departments.map(d => Number(d.rejected_cnt || 0));
+
+    const ctx = document.getElementById('adminChart');
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Pending',  data: pending,  backgroundColor: 'rgba(245,158,11,0.75)', borderColor: 'rgba(245,158,11,1)', borderWidth: 1, borderRadius: 4 },
+          { label: 'Approved', data: approved, backgroundColor: 'rgba(16,185,129,0.75)',  borderColor: 'rgba(16,185,129,1)',  borderWidth: 1, borderRadius: 4 },
+          { label: 'Rejected', data: rejected, backgroundColor: 'rgba(239,68,68,0.75)',   borderColor: 'rgba(239,68,68,1)',   borderWidth: 1, borderRadius: 4 },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#9ca3af', font: { family: 'Inter', size: 12 }, padding: 16 } }
+        },
+        scales: {
+          x: { stacked: true, ticks: { color: '#6b7280', font: { family: 'Inter' } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { stacked: true, ticks: { color: '#6b7280', font: { family: 'Inter' }, stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' } }
+        }
+      }
+    });
+
+    const tbody = document.getElementById('deptTableBody');
+    tbody.innerHTML = '';
+    departments.forEach(d => {
+      const total = Number(d.pending_cnt) + Number(d.approved_cnt) + Number(d.rejected_cnt);
+      const appPct = total ? Math.round((Number(d.approved_cnt) / total) * 100) : 0;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span style="font-weight:600;color:var(--text-primary);">${d.department_name}</span></td>
+        <td>${statusBadge('Pending')} <span style="font-size:13px;margin-left:4px;">${d.pending_cnt}</span></td>
+        <td>${statusBadge('Approved')} <span style="font-size:13px;margin-left:4px;">${d.approved_cnt}</span></td>
+        <td>${statusBadge('Rejected')} <span style="font-size:13px;margin-left:4px;">${d.rejected_cnt}</span></td>
+        <td style="font-weight:700;color:var(--text-primary);">${total}</td>
+        <td style="min-width:120px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="kcs-progress-track" style="flex:1;height:6px;">
+              <div class="kcs-progress-fill kcs-progress-success" style="width:${appPct}%;"></div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted);width:32px;">${appPct}%</span>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('loadingDepts').style.display = 'none';
+    document.getElementById('deptTableWrap').style.display = 'block';
+  }
+
+  async function loadFeedback() {
+    const res      = await apiGet('/api/admin/feedback-analytics');
+    const summary  = res.analytics?.summary  || {};
+    const comments = res.analytics?.comments || [];
+
+    const avg = summary.avg_rating;
+    document.getElementById('avgRating').textContent = avg ? Number(avg).toFixed(1) : '—';
+
+    const barsWrap = document.getElementById('ratingBarsWrap');
+    barsWrap.innerHTML = '';
+    const ratingsData = [
+      { label: '5 ★★★★★', count: summary.rating_5_cnt || 0, cls: 'kcs-progress-success' },
+      { label: '4 ★★★★☆', count: summary.rating_4_cnt || 0, cls: 'kcs-progress-brand' },
+      { label: '3 ★★★☆☆', count: summary.rating_3_cnt || 0, cls: 'kcs-progress-warning' },
+      { label: '2 ★★☆☆☆', count: summary.rating_2_cnt || 0, cls: 'kcs-progress-danger' },
+      { label: '1 ★☆☆☆☆', count: summary.rating_1_cnt || 0, cls: 'kcs-progress-danger' },
+    ];
+    const totalVotes = ratingsData.reduce((a, r) => a + Number(r.count), 0) || 1;
+    ratingsData.forEach(r => {
+      const pct = Math.round((Number(r.count) / totalVotes) * 100);
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:12px;';
+      row.innerHTML = `
+        <span style="font-size:12px;color:var(--text-muted);width:80px;flex-shrink:0;">${r.label}</span>
+        <div class="kcs-progress-track" style="flex:1;height:8px;">
+          <div class="kcs-progress-fill ${r.cls}" style="width:${pct}%;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:700;color:var(--text-secondary);width:36px;text-align:right;">${r.count}</span>
+      `;
+      barsWrap.appendChild(row);
+    });
+
+    const wrap = document.getElementById('commentsWrap');
+    wrap.innerHTML = '';
+    if (!comments.length) {
+      wrap.innerHTML = '<div class="kcs-empty"><div class="kcs-empty-icon">💬</div><div class="kcs-empty-title">No feedback yet</div><div class="kcs-empty-text">Feedback will appear here once cleared students submit it.</div></div>';
+      return;
+    }
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px;';
+    for (const c of comments) {
+      const stars = '★'.repeat(c.rating) + '☆'.repeat(5 - c.rating);
+      const col = document.createElement('div');
+      col.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;';
+      col.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-weight:600;font-size:14px;color:var(--text-primary);">${c.full_name || 'Student'}</span>
+          <span style="color:#fbbf24;font-size:13px;letter-spacing:1px;">${stars}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${c.created_at || ''}</div>
+        <div style="font-size:13px;color:var(--text-secondary);font-style:${c.comment ? 'normal' : 'italic'};">${c.comment || 'No comment'}</div>
+      `;
+      grid.appendChild(col);
+    }
+    wrap.appendChild(grid);
+  }
+
+  async function loadAll() {
+    await Promise.all([loadAdmin(), loadFeedback()]);
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCsrfToken();
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    try {
+      await loadAll();
+    } catch (e) {
+      alert('Session expired. Please login again.');
+      window.location.href = '/pages/login.html';
+    }
+  });
+</script>
+</body>
+</html>

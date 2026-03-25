@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Management – KCS | Kakamega High School</title>
+  <meta name="description" content="Manage departments, staff accounts, students, and financial records.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/assets/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="kcs-wrapper">
+
+  <!-- Navbar -->
+  <nav class="kcs-nav">
+    <div class="container">
+      <div class="kcs-nav-inner">
+        <a class="kcs-logo" href="#">
+          <div class="kcs-logo-badge">KCS</div>
+          <div class="kcs-logo-text">
+            <span class="kcs-logo-title">KCS Clearance</span>
+            <span class="kcs-logo-sub">Admin Portal</span>
+          </div>
+        </a>
+        <div class="kcs-nav-actions">
+          <a href="/pages/admin-dashboard.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">📊 Dashboard</a>
+          <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="kcs-page-header">
+      <h1 class="kcs-page-title">Admin Management</h1>
+      <p class="kcs-page-subtitle">Create departments, staff accounts, students, and manage financial records.</p>
+    </div>
+
+    <!-- Global Alert -->
+    <div id="alertWrap" style="margin-bottom:16px;"></div>
+
+    <!-- Row 1: Department + Staff -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+
+      <!-- Create Department -->
+      <div class="kcs-card">
+        <div class="kcs-card-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(79,70,229,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">🏢</div>
+            <span style="font-weight:700;font-size:14px;color:var(--text-primary);">Create Department</span>
+          </div>
+        </div>
+        <div class="kcs-card-body">
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="deptName">Department Name</label>
+            <input class="kcs-input" id="deptName" type="text" placeholder="e.g. Library, Finance, Bursar" required>
+          </div>
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="deptSortOrder">Sort Order</label>
+            <input class="kcs-input" id="deptSortOrder" type="number" value="0" min="0">
+          </div>
+          <button class="btn-kcs btn-primary-kcs btn-full" id="createDeptBtn" type="button">Create Department</button>
+        </div>
+      </div>
+
+      <!-- Create Department Staff -->
+      <div class="kcs-card">
+        <div class="kcs-card-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(6,182,212,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">👤</div>
+            <span style="font-weight:700;font-size:14px;color:var(--text-primary);">Create Department Staff</span>
+          </div>
+        </div>
+        <div class="kcs-card-body">
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="staffDeptId">Department</label>
+            <select class="kcs-select" id="staffDeptId" required></select>
+          </div>
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="staffEmail">Email</label>
+            <input class="kcs-input" id="staffEmail" type="email" placeholder="staff@school.ac.ke" required>
+          </div>
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="staffPassword">Password</label>
+            <input class="kcs-input" id="staffPassword" type="password" placeholder="Min. 8 characters" required>
+          </div>
+          <button class="btn-kcs btn-success-kcs btn-full" id="createStaffBtn" type="button">Create Staff Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Create Student + Financial Update -->
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:20px;">
+
+      <!-- Create Student -->
+      <div class="kcs-card">
+        <div class="kcs-card-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(16,185,129,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">🎓</div>
+            <span style="font-weight:700;font-size:14px;color:var(--text-primary);">Create Student + Financial Record</span>
+          </div>
+        </div>
+        <div class="kcs-card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="stuFullName">Full Name</label>
+              <input class="kcs-input" id="stuFullName" type="text" required>
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="stuAdmission">Admission No.</label>
+              <input class="kcs-input" id="stuAdmission" type="text" required>
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="stuClass">Class</label>
+              <input class="kcs-input" id="stuClass" type="text" placeholder="e.g. Form 4" required>
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="stuEmail">Email</label>
+              <input class="kcs-input" id="stuEmail" type="email" required>
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="stuPassword">Password</label>
+              <input class="kcs-input" id="stuPassword" type="password" required>
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="feeAmount">Fee Amount (KES)</label>
+              <input class="kcs-input" id="feeAmount" type="number" step="0.01" value="0" min="0">
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="amountPaid">Amount Paid (KES)</label>
+              <input class="kcs-input" id="amountPaid" type="number" step="0.01" value="0" min="0">
+            </div>
+            <div class="kcs-form-group">
+              <label class="kcs-label" for="balance">Balance (KES)</label>
+              <input class="kcs-input" id="balance" type="number" step="0.01" value="0" min="0">
+            </div>
+          </div>
+          <button class="btn-kcs btn-primary-kcs btn-full" id="createStudentBtn" type="button" style="margin-top:4px;">Create Student</button>
+        </div>
+      </div>
+
+      <!-- Update Financial Balance -->
+      <div class="kcs-card">
+        <div class="kcs-card-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:rgba(245,158,11,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;">💰</div>
+            <span style="font-weight:700;font-size:14px;color:var(--text-primary);">Update Financial Balance</span>
+          </div>
+        </div>
+        <div class="kcs-card-body">
+          <div class="kcs-alert kcs-alert-info mb-16" style="font-size:13px;">
+            💡 Set balance &gt; 0 to test the financial validation gate — approval will be auto-denied.
+          </div>
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="finAdmission">Admission Number</label>
+            <input class="kcs-input" id="finAdmission" type="text" placeholder="KHS/2024/001" required>
+          </div>
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="finPaid">Amount Paid (KES)</label>
+            <input class="kcs-input" id="finPaid" type="number" step="0.01" value="0" min="0" required>
+          </div>
+          <div class="kcs-form-group">
+            <label class="kcs-label" for="finBalance">Outstanding Balance (KES)</label>
+            <input class="kcs-input" id="finBalance" type="number" step="0.01" value="0" min="0" required>
+          </div>
+          <button class="btn-kcs btn-warning-kcs btn-full" id="setFinBtn" type="button">Set Financial Record</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding-bottom:32px;"></div>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+  function showAlert(type, msg) {
+    const map = { success: 'kcs-alert-success', danger: 'kcs-alert-danger', warning: 'kcs-alert-warning', info: 'kcs-alert-info' };
+    document.getElementById('alertWrap').innerHTML = `<div class="kcs-alert ${map[type] || map.info}">${msg}</div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => { document.getElementById('alertWrap').innerHTML = ''; }, 5000);
+  }
+
+  function setBtnLoading(id, loading, label) {
+    const btn = document.getElementById(id);
+    btn.disabled = loading;
+    btn.textContent = loading ? 'Please wait…' : label;
+  }
+
+  async function loadDepartmentsForSelect() {
+    const res = await apiGet('/api/admin/departments');
+    const select = document.getElementById('staffDeptId');
+    select.innerHTML = '';
+    for (const d of res.departments || []) {
+      const opt = document.createElement('option');
+      opt.value = d.department_id;
+      opt.textContent = d.name;
+      select.appendChild(opt);
+    }
+    if (!res.departments?.length) {
+      const opt = document.createElement('option');
+      opt.textContent = 'No departments yet';
+      select.appendChild(opt);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCsrfToken();
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    await loadDepartmentsForSelect().catch(() => {});
+
+    document.getElementById('createDeptBtn').addEventListener('click', async () => {
+      setBtnLoading('createDeptBtn', true, 'Create Department');
+      try {
+        await apiPost('/api/admin/departments/create', {
+          name: document.getElementById('deptName').value,
+          sort_order: Number(document.getElementById('deptSortOrder').value || 0),
+        });
+        showAlert('success', '✓ Department created successfully.');
+        document.getElementById('deptName').value = '';
+        await loadDepartmentsForSelect();
+      } catch (e) { showAlert('danger', e.message || 'Failed to create department.'); }
+      finally { setBtnLoading('createDeptBtn', false, 'Create Department'); }
+    });
+
+    document.getElementById('createStaffBtn').addEventListener('click', async () => {
+      setBtnLoading('createStaffBtn', true, 'Create Staff Account');
+      try {
+        await apiPost('/api/admin/create-department-staff', {
+          email:         document.getElementById('staffEmail').value,
+          password:      document.getElementById('staffPassword').value,
+          department_id: Number(document.getElementById('staffDeptId').value),
+        });
+        showAlert('success', '✓ Department staff account created successfully.');
+        document.getElementById('staffEmail').value    = '';
+        document.getElementById('staffPassword').value = '';
+      } catch (e) { showAlert('danger', e.message || 'Failed to create staff.'); }
+      finally { setBtnLoading('createStaffBtn', false, 'Create Staff Account'); }
+    });
+
+    document.getElementById('createStudentBtn').addEventListener('click', async () => {
+      setBtnLoading('createStudentBtn', true, 'Create Student');
+      try {
+        await apiPost('/api/admin/students/create', {
+          full_name:        document.getElementById('stuFullName').value,
+          admission_number: document.getElementById('stuAdmission').value,
+          class_name:       document.getElementById('stuClass').value,
+          email:            document.getElementById('stuEmail').value,
+          password:         document.getElementById('stuPassword').value,
+          fee_amount:  Number(document.getElementById('feeAmount').value  || 0),
+          amount_paid: Number(document.getElementById('amountPaid').value || 0),
+          balance:     Number(document.getElementById('balance').value    || 0),
+        });
+        showAlert('success', '✓ Student account created successfully.');
+      } catch (e) { showAlert('danger', e.message || 'Failed to create student.'); }
+      finally { setBtnLoading('createStudentBtn', false, 'Create Student'); }
+    });
+
+    document.getElementById('setFinBtn').addEventListener('click', async () => {
+      setBtnLoading('setFinBtn', true, 'Set Financial Record');
+      const admission = document.getElementById('finAdmission').value;
+      const bal  = Number(document.getElementById('finBalance').value || 0);
+      const paid = Number(document.getElementById('finPaid').value    || 0);
+      try {
+        await apiPost('/api/admin/financial/set-current', {
+          admission_number: admission,
+          fee_amount:  bal + paid,
+          amount_paid: paid,
+          balance:     bal,
+        });
+        showAlert('success', '✓ Financial record updated successfully.');
+      } catch (e) { showAlert('danger', e.message || 'Failed to update financial record.'); }
+      finally { setBtnLoading('setFinBtn', false, 'Set Financial Record'); }
+    });
+  });
+</script>
+</body>
+</html>

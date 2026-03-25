@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Department Dashboard – KCS | Kakamega High School</title>
+  <meta name="description" content="Department staff clearance approval dashboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/assets/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="kcs-wrapper">
+
+  <!-- Navbar -->
+  <nav class="kcs-nav">
+    <div class="container">
+      <div class="kcs-nav-inner">
+        <a class="kcs-logo" href="#">
+          <div class="kcs-logo-badge">KCS</div>
+          <div class="kcs-logo-text">
+            <span class="kcs-logo-title">KCS Clearance</span>
+            <span class="kcs-logo-sub">Department Portal</span>
+          </div>
+        </a>
+        <div class="kcs-nav-actions">
+          <span id="deptLabel" style="font-size:13px;color:var(--text-muted);"></span>
+          <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="kcs-page-header">
+      <h1 class="kcs-page-title">Department Dashboard</h1>
+      <p class="kcs-page-subtitle">Review and approve/reject student clearance requests. Financial gate is automatic.</p>
+    </div>
+
+    <!-- Stats + Chart row -->
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:20px;margin-bottom:20px;" id="topRow">
+      <!-- Chart Card -->
+      <div class="kcs-card">
+        <div class="kcs-card-header">
+          <span style="font-weight:700;font-size:14px;color:var(--text-primary);">Progress Overview</span>
+          <span id="lastUpdated" style="font-size:12px;color:var(--text-muted);"></span>
+        </div>
+        <div class="kcs-card-body kcs-chart-wrap">
+          <canvas id="deptChart" height="190"></canvas>
+        </div>
+      </div>
+
+      <!-- Stat + Rule Card -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="kcs-stat-card">
+          <div class="kcs-stat-icon warning">⏳</div>
+          <div>
+            <div class="kcs-stat-value" id="statPending">—</div>
+            <div class="kcs-stat-label">Pending</div>
+          </div>
+        </div>
+        <div class="kcs-stat-card">
+          <div class="kcs-stat-icon success">✅</div>
+          <div>
+            <div class="kcs-stat-value" id="statApproved">—</div>
+            <div class="kcs-stat-label">Approved</div>
+          </div>
+        </div>
+        <div class="kcs-stat-card">
+          <div class="kcs-stat-icon danger">❌</div>
+          <div>
+            <div class="kcs-stat-value" id="statRejected">—</div>
+            <div class="kcs-stat-label">Rejected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Rule Banner -->
+    <div class="kcs-alert kcs-alert-warning mb-20" style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px;">⚠️</span>
+      <span><strong>Financial Gate Active:</strong> If a student has an outstanding fee balance &gt; 0, the system will automatically deny approval regardless of your decision.</span>
+    </div>
+
+    <!-- Students Table -->
+    <div class="kcs-card mb-20">
+      <div class="kcs-card-header">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0;">Student Requests</h2>
+        <button class="btn-kcs btn-ghost-kcs btn-sm-kcs" onclick="refresh()">↻ Refresh</button>
+      </div>
+      <div class="kcs-card-body" style="padding-top:0;">
+        <div id="loadingStudents" class="kcs-spinner"></div>
+
+        <div id="noStudentsMsg" style="display:none;">
+          <div class="kcs-empty">
+            <div class="kcs-empty-icon">👥</div>
+            <div class="kcs-empty-title">No student requests</div>
+            <div class="kcs-empty-text">No clearance requests for your department yet.</div>
+          </div>
+        </div>
+
+        <div id="studentsTableWrap" style="display:none;">
+          <div class="kcs-table-wrap">
+            <table class="kcs-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Admission No.</th>
+                  <th>Overall Status</th>
+                  <th>Dept. Status</th>
+                  <th>Decision</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decision Response -->
+    <div id="deptMessage" style="margin-bottom:24px;"></div>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+  let deptId = null;
+  let chartInstance = null;
+
+  function renderChart(counts) {
+    const ctx = document.getElementById('deptChart');
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Approved', 'Rejected'],
+        datasets: [{
+          data: [Number(counts.Pending || 0), Number(counts.Approved || 0), Number(counts.Rejected || 0)],
+          backgroundColor: ['rgba(245,158,11,0.8)', 'rgba(16,185,129,0.8)', 'rgba(239,68,68,0.8)'],
+          borderColor: ['rgba(245,158,11,1)', 'rgba(16,185,129,1)', 'rgba(239,68,68,1)'],
+          borderWidth: 2,
+          hoverOffset: 6,
+        }]
+      },
+      options: {
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#9ca3af', font: { family: 'Inter', size: 12 }, padding: 16 }
+          }
+        }
+      }
+    });
+  }
+
+  async function refresh() {
+    document.getElementById('loadingStudents').style.display = 'block';
+    document.getElementById('studentsTableWrap').style.display = 'none';
+    document.getElementById('noStudentsMsg').style.display = 'none';
+
+    const res      = await apiGet('/api/department/students-progress');
+    deptId         = res.department_id;
+    const counts   = res.counts   || {};
+    const students = res.students || [];
+
+    document.getElementById('deptLabel').textContent  = 'Dept #' + deptId;
+    document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+    document.getElementById('statPending').textContent  = counts.Pending  || 0;
+    document.getElementById('statApproved').textContent = counts.Approved || 0;
+    document.getElementById('statRejected').textContent = counts.Rejected || 0;
+
+    renderChart(counts);
+    document.getElementById('loadingStudents').style.display = 'none';
+
+    if (!students.length) {
+      document.getElementById('noStudentsMsg').style.display = 'block';
+      return;
+    }
+
+    const tbody = document.getElementById('studentsTbody');
+    tbody.innerHTML = '';
+
+    for (const st of students) {
+      const tr         = document.createElement('tr');
+      const requestId  = st.request_id;
+      const deptStatus = st.dept_status || 'Pending';
+
+      tr.innerHTML = `
+        <td>
+          <div style="font-weight:600;color:var(--text-primary);">${st.full_name}</div>
+          <div style="font-size:12px;color:var(--text-muted);">${st.class_name || ''}</div>
+        </td>
+        <td style="font-size:13px;">${st.admission_number || '—'}</td>
+        <td>${statusBadge(st.overall_status)}</td>
+        <td>${statusBadge(deptStatus)}</td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:210px;">
+            <select class="kcs-select" data-role="status" style="padding:8px 34px 8px 10px;font-size:13px;">
+              <option value="Approved" ${deptStatus === 'Approved' ? 'selected' : ''}>✅ Approve</option>
+              <option value="Rejected" ${deptStatus === 'Rejected' ? 'selected' : ''}>❌ Reject</option>
+            </select>
+            <input class="kcs-input" type="text" data-role="reason" placeholder="Rejection reason (optional)" style="padding:8px 10px;font-size:13px;">
+            <button class="btn-kcs btn-primary-kcs btn-sm-kcs" type="button" data-role="submit">Submit</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      tr.querySelector('[data-role="submit"]').addEventListener('click', async (e) => {
+        const btn    = e.currentTarget;
+        const status = tr.querySelector('[data-role="status"]').value;
+        const reason = tr.querySelector('[data-role="reason"]').value;
+        btn.disabled = true; btn.textContent = 'Saving…';
+        try {
+          const ans = await apiPost('/api/department/decision', {
+            request_id:    requestId,
+            department_id: deptId,
+            status,
+            reason: reason || null,
+          });
+          document.getElementById('deptMessage').innerHTML = `<div class="kcs-alert kcs-alert-success">${ans.message || 'Decision saved successfully.'}</div>`;
+          await refresh();
+        } catch (e) {
+          document.getElementById('deptMessage').innerHTML = `<div class="kcs-alert kcs-alert-danger">${e.message || 'Failed to save decision.'}</div>`;
+          btn.disabled = false; btn.textContent = 'Submit';
+        }
+      });
+    }
+
+    document.getElementById('studentsTableWrap').style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCsrfToken();
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    try {
+      await refresh();
+    } catch (e) {
+      alert('Session expired. Please login again.');
+      window.location.href = '/pages/login.html';
+    }
+  });
+</script>
+</body>
+</html>
