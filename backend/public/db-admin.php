@@ -25,8 +25,37 @@ if (!isset($_SESSION['db_admin_auth'])) {
 
 // Connect to SQLite
 $dbPath = __DIR__ . '/../../database/kcs.sqlite';
-if (!file_exists($dbPath)) {
-    die("Database file not found at $dbPath");
+$dbDir = dirname($dbPath);
+if (!is_dir($dbDir)) {
+    mkdir($dbDir, 0777, true);
+}
+
+$isNew = !file_exists($dbPath) || filesize($dbPath) === 0;
+
+try {
+    $pdo = new PDO("sqlite:" . $dbPath);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    
+    // Auto-migrate if it's wiped!
+    if ($isNew) {
+        $sqlPath = __DIR__ . '/../../database/kcs_clearance.sql';
+        if (file_exists($sqlPath)) {
+            $sql = file_get_contents($sqlPath);
+            $sql = preg_replace('/CREATE DATABASE[^;]+;/i', '', $sql);
+            $sql = preg_replace('/USE [^;]+;/i', '', $sql);
+            $sql = preg_replace('/SET SQL_MODE[^;]+;/i', '', $sql);
+            $sql = preg_replace('/SET time_zone[^;]+;/i', '', $sql);
+            $sql = str_ireplace('AUTO_INCREMENT', 'AUTOINCREMENT', $sql);
+            $sql = preg_replace('/INT(\s+UNSIGNED)?(\s+AUTOINCREMENT)?\s+PRIMARY KEY/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+            $sql = preg_replace('/ENGINE=InnoDB/i', '', $sql);
+            $sql = preg_replace('/ENUM\([^)]+\)/i', 'VARCHAR(50)', $sql);
+            $sql = preg_replace('/ON DUPLICATE KEY UPDATE[^;]+;/i', ';', $sql);
+            $pdo->exec($sql);
+        }
+    }
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
 
 try {
