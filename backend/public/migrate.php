@@ -50,6 +50,10 @@ if (isset($config['db']['driver']) && $config['db']['driver'] === 'sqlite') {
     $sql = preg_replace('/USE [^;]+;/i', '', $sql);
 
     if (isset($config['db']['driver']) && $config['db']['driver'] === 'sqlite') {
+        // Strip SET statements unsupported by SQLite
+        $sql = preg_replace('/SET SQL_MODE[^;]+;/i', '', $sql);
+        $sql = preg_replace('/SET time_zone[^;]+;/i', '', $sql);
+        
         // Translate MySQL syntax to SQLite
         $sql = str_ireplace('AUTO_INCREMENT', 'AUTOINCREMENT', $sql);
         $sql = preg_replace('/INT(\s+UNSIGNED)?(\s+AUTOINCREMENT)?\s+PRIMARY KEY/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
