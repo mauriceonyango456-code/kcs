@@ -17,6 +17,7 @@ $dbConfig = [];
 if ($dbUrl) {
     $parsed = parse_url($dbUrl);
     $dbConfig = [
+        'driver' => 'mysql',
         'host' => $parsed['host'] ?? '127.0.0.1',
         'name' => ltrim($parsed['path'] ?? '/kcs_clearance', '/'),
         'user' => $parsed['user'] ?? 'root',
@@ -25,13 +26,10 @@ if ($dbUrl) {
         'charset' => 'utf8mb4',
     ];
 } else {
+    // If no MySQL variable is set, fallback to SQLite automatically!
     $dbConfig = [
-        'host' => getenv('DB_HOST') ?: '127.0.0.1',
-        'name' => getenv('DB_NAME') ?: 'kcs_clearance',
-        'user' => getenv('DB_USER') ?: 'root',
-        'pass' => getenv('DB_PASS') ?: '',
-        'port' => getenv('DB_PORT') ?: 3306,
-        'charset' => 'utf8mb4',
+        'driver' => 'sqlite',
+        'path' => __DIR__ . '/../../database/kcs.sqlite',
     ];
 }
 

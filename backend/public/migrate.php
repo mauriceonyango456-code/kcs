@@ -8,6 +8,20 @@ declare(strict_types=1);
 $config = require __DIR__ . '/../config/config.php';
 
 try {
+// Check if we are using SQLite or MySQL
+if (isset($config['db']['driver']) && $config['db']['driver'] === 'sqlite') {
+    // Ensure the database directory exists
+    $dbDir = dirname($config['db']['path']);
+    if (!is_dir($dbDir)) {
+        mkdir($dbDir, 0777, true);
+    }
+    
+    // Connect to SQLite
+    $pdo = new PDO("sqlite:" . $config['db']['path']);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec("PRAGMA foreign_keys = ON;"); // enable foreign keys
+} else {
+    // MySQL connection
     $dsn = sprintf(
         "mysql:host=%s;port=%d;dbname=%s;charset=%s",
         $config['db']['host'],
@@ -21,6 +35,7 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ]);
+}
 
     // Read the SQL schema file
     $sqlPath = __DIR__ . '/../../database/kcs_clearance.sql';
@@ -30,11 +45,19 @@ try {
 
     $sql = file_get_contents($sqlPath);
 
-    // Some shared SQL files have DELIMITER or CREATE DATABASE which PDO doesn't like directly
-    // Let's strip CREATE DATABASE just in case since Railway already creates it
+    // Filter out common MySQL statements that break SQLite
     $sql = preg_replace('/CREATE DATABASE[^;]+;/i', '', $sql);
     $sql = preg_replace('/USE [^;]+;/i', '', $sql);
-    
+
+    if (isset($config['db']['driver']) && $config['db']['driver'] === 'sqlite') {
+        // Translate MySQL syntax to SQLite
+        $sql = str_ireplace('AUTO_INCREMENT', 'AUTOINCREMENT', $sql);
+        $sql = preg_replace('/INT(\s+UNSIGNED)?(\s+AUTOINCREMENT)?\s+PRIMARY KEY/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+        $sql = preg_replace('/ENGINE=InnoDB/i', '', $sql);
+        $sql = preg_replace('/ENUM\([^)]+\)/i', 'VARCHAR(50)', $sql);
+        $sql = preg_replace('/ON DUPLICATE KEY UPDATE[^;]+;/i', ';', $sql); // Basic strip for inserts
+    }
+
     // Execute the queries
     $pdo->exec($sql);
     
