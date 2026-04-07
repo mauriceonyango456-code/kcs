@@ -6,16 +6,34 @@
 
 declare(strict_types=1);
 
+// Railway automatically provides MYSQL_URL or DATABASE_URL
+$dbUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_URL');
+$dbConfig = [];
+
+if ($dbUrl) {
+    $parsed = parse_url($dbUrl);
+    $dbConfig = [
+        'host' => $parsed['host'] ?? '127.0.0.1',
+        'name' => ltrim($parsed['path'] ?? '/kcs_clearance', '/'),
+        'user' => $parsed['user'] ?? 'root',
+        'pass' => $parsed['pass'] ?? '',
+        'port' => isset($parsed['port']) ? (int)$parsed['port'] : 3306,
+        'charset' => 'utf8mb4',
+    ];
+} else {
+    $dbConfig = [
+        'host' => getenv('DB_HOST') ?: '127.0.0.1',
+        'name' => getenv('DB_NAME') ?: 'kcs_clearance',
+        'user' => getenv('DB_USER') ?: 'root',
+        'pass' => getenv('DB_PASS') ?: '',
+        'port' => getenv('DB_PORT') ?: 3306,
+        'charset' => 'utf8mb4',
+    ];
+}
+
 return [
   // Database
-  'db' => [
-    'host' => getenv('DB_HOST') ?: '127.0.0.1',
-    'name' => getenv('DB_NAME') ?: 'kcs_clearance',
-    'user' => getenv('DB_USER') ?: 'root',
-    'pass' => getenv('DB_PASS') ?: '',
-    'port' => getenv('DB_PORT') ?: 3306,
-    'charset' => 'utf8mb4',
-  ],
+  'db' => $dbConfig,
 
   // Email (SMTP - Gmail example)
   // IMPORTANT: Use a Gmail App Password, not your normal password.
