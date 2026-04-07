@@ -7,7 +7,11 @@
 declare(strict_types=1);
 
 // Railway automatically provides MYSQL_URL or DATABASE_URL
-$dbUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_URL');
+// Check getenv, $_ENV, and $_SERVER just in case of environment configurations
+$dbUrl = getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? ($_SERVER['DATABASE_URL'] ?? null));
+if (!$dbUrl) {
+    $dbUrl = getenv('MYSQL_URL') ?: ($_ENV['MYSQL_URL'] ?? ($_SERVER['MYSQL_URL'] ?? null));
+}
 $dbConfig = [];
 
 if ($dbUrl) {
