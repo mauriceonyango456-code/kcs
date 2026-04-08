@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+ob_start(); // Prevent any warnings/notices from breaking JSON output
+
 session_start();
 
 require __DIR__ . '/../src/autoload.php';

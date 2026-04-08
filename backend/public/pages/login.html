@@ -191,9 +191,15 @@
           password: document.getElementById('loginPassword').value,
         });
         const role = res?.role_name;
-        if (role === 'student')          window.location.href = '/pages/student-clearance.html';
-        else if (role === 'department_staff') window.location.href = '/pages/dept-dashboard.html';
-        else if (role === 'admin')       window.location.href = '/pages/admin-dashboard.html';
+        if (role === 'student') {
+          window.location.href = '/pages/student-clearance.html';
+        } else if (role === 'department_staff') {
+          window.location.href = '/pages/dept-dashboard.html';
+        } else if (role === 'admin') {
+          window.location.href = '/pages/admin-dashboard.html';
+        } else {
+          throw new Error('Unrecognized or missing user role: ' + (role || 'null'));
+        }
       } catch (err) {
         errEl.textContent = err.message || 'Login failed. Please check your credentials.';
         errEl.style.display = 'block';
