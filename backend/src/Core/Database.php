@@ -23,8 +23,9 @@ class Database
       $dsn = 'sqlite:' . $db['path'];
     } else {
       $dsn = sprintf(
-        'mysql:host=%s;dbname=%s;charset=%s',
+        'mysql:host=%s;port=%d;dbname=%s;charset=%s',
         $db['host'],
+        $db['port'] ?? 3306,
         $db['name'],
         $db['charset']
       );
