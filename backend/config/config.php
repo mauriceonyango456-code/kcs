@@ -51,8 +51,8 @@ return [
   // One-time bootstrap for initial admin creation (for academic setup).
   // After you create the admin, delete or lock this script.
   'setup' => [
-    'admin_email' => 'admin@kcs.local',
-    'admin_password' => 'ChangeMe-Admin123!',
+    'admin_email'    => 'mauriceonyango456@gmail.com',
+    'admin_password' => 'Admin@KCS2024',
   ],
 ];
 

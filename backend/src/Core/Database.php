@@ -170,5 +170,30 @@ class Database
         UNIQUE (request_id)
       );
     ");
+
+    // Auto-create the admin user from config (so no manual setup step needed)
+    try {
+      $cfg   = require __DIR__ . '/../../config/config.php';
+      $setup = $cfg['setup'] ?? [];
+      $email = strtolower(trim((string)($setup['admin_email'] ?? '')));
+      $pw    = (string)($setup['admin_password'] ?? '');
+
+      if ($email !== '' && $pw !== '') {
+        $check = $pdo->prepare('SELECT user_id FROM users WHERE email = ? LIMIT 1');
+        $check->execute([$email]);
+        if (!$check->fetch()) {
+          $hash        = password_hash($pw, PASSWORD_BCRYPT);
+          $roleStmt    = $pdo->prepare('SELECT role_id FROM roles WHERE role_name = ? LIMIT 1');
+          $roleStmt->execute(['admin']);
+          $role        = $roleStmt->fetch();
+          if ($role) {
+            $ins = $pdo->prepare('INSERT INTO users (role_id, email, password_hash, is_active) VALUES (?,?,?,1)');
+            $ins->execute([$role['role_id'], $email, $hash]);
+          }
+        }
+      }
+    } catch (\Throwable $e) {
+      // Non-fatal: admin can be created via setup_admin.php if this fails
+    }
   }
 }
