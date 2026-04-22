@@ -27,22 +27,22 @@ async function apiPost(path, payload = {}) {
 }
 
 async function loadCsrfToken() {
-  const res = await apiGet('/api/auth/csrf');
+  const res = await apiGet('../api/auth/csrf');
   csrfToken = res.csrf_token || null;
 }
 
 async function logout() {
-  await apiPost('/api/auth/logout', {});
-  window.location.href = '/pages/login.html';
+  await apiPost('../api/auth/logout', {});
+  window.location.href = '../pages/login.html';
 }
 
 function statusBadge(status) {
   const s = String(status || '');
   if (s === 'Approved' || s === 'Cleared')
-    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(52,211,153,.15);color:#34d399;">✅ '+s+'</span>';
+    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(52,211,153,.15);color:#34d399;">\u2705 '+s+'</span>';
   if (s === 'Rejected')
-    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(248,113,113,.15);color:#f87171;">❌ Rejected</span>';
+    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(248,113,113,.15);color:#f87171;">\u274C Rejected</span>';
   if (s === 'InProgress')
-    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(99,102,241,.15);color:#818cf8;">🔄 In Progress</span>';
-  return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(251,191,36,.15);color:#fbbf24;">⏳ '+( s || 'Pending')+'</span>';
+    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(99,102,241,.15);color:#818cf8;">\u21BB In Progress</span>';
+  return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(251,191,36,.15);color:#fbbf24;">\u23F3 '+( s || 'Pending')+'</span>';
 }

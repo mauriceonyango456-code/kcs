@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="/assets/style.css" rel="stylesheet">
+  <link href="../assets/style.css" rel="stylesheet">
 </head>
 <body>
 <div class="kcs-wrapper login-page">
@@ -59,10 +59,8 @@
         </div>
       </div>
 
-      <!-- Tab switcher -->
       <div class="kcs-tabs" role="tablist">
-        <button class="kcs-tab active" id="tab-login" onclick="switchTab('login')" role="tab" aria-selected="true">Sign In</button>
-        <button class="kcs-tab" id="tab-register" onclick="switchTab('register')" role="tab" aria-selected="false">Register</button>
+        <button class="kcs-tab active" id="tab-login" role="tab" aria-selected="true" style="width:100%;text-align:center;">Staff &amp; Student Sign In</button>
       </div>
 
       <!-- Login Panel -->
@@ -80,79 +78,26 @@
             <label class="kcs-label" for="loginPassword">Password</label>
             <div style="position:relative;">
               <input class="kcs-input" type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" style="padding-right:44px;">
-              <button type="button" id="togglePwd" onclick="togglePwdVis('loginPassword','togglePwd')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0;line-height:1;" aria-label="Toggle password visibility">👁</button>
+              <button type="button" id="togglePwd" onclick="togglePwdVis('loginPassword','togglePwd')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0;line-height:1;" aria-label="Toggle password visibility">👁️</button>
             </div>
           </div>
           <div id="loginError" class="kcs-alert kcs-alert-danger mb-16" style="display:none;"></div>
           <button class="btn-kcs btn-primary-kcs btn-full btn-lg-kcs" type="submit" id="loginBtn">
             Sign In
           </button>
-          <div style="margin-top:16px;text-align:center;font-size:13px;color:var(--text-muted);">
-            Don't have an account?
-            <button type="button" onclick="switchTab('register')" style="background:none;border:none;color:var(--brand-primary);font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;padding:0;margin-left:4px;">Register here</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Register Panel -->
-      <div class="kcs-tab-panel" id="panel-register">
-        <div class="mb-20">
-          <div style="font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:4px;">Create account</div>
-          <div style="font-size:13px;color:var(--text-muted);">Student self-registration — staff accounts are created by Admin</div>
-        </div>
-        <form id="registerForm" novalidate>
-          <div class="kcs-form-group">
-            <label class="kcs-label" for="regFullName">Full Name</label>
-            <input class="kcs-input" type="text" id="regFullName" placeholder="e.g. John Doe" required autocomplete="name">
-          </div>
-          <div class="grid-2">
-            <div class="kcs-form-group">
-              <label class="kcs-label" for="regAdmission">Admission No.</label>
-              <input class="kcs-input" type="text" id="regAdmission" placeholder="e.g. KHS/2024/001" required>
-            </div>
-            <div class="kcs-form-group">
-              <label class="kcs-label" for="regClass">Class</label>
-              <input class="kcs-input" type="text" id="regClass" placeholder="e.g. Form 4" required>
-            </div>
-          </div>
-          <div class="kcs-form-group">
-            <label class="kcs-label" for="regEmail">Email address</label>
-            <input class="kcs-input" type="email" id="regEmail" placeholder="name@school.ac.ke" required autocomplete="email">
-          </div>
-          <div class="kcs-form-group">
-            <label class="kcs-label" for="regPassword">Password</label>
-            <input class="kcs-input" type="password" id="regPassword" placeholder="Min. 8 characters" required autocomplete="new-password">
-          </div>
-          <div id="registerError" class="kcs-alert kcs-alert-danger mb-16" style="display:none;"></div>
-          <div id="registerSuccess" class="kcs-alert kcs-alert-success mb-16" style="display:none;"></div>
-          <button class="btn-kcs btn-success-kcs btn-full btn-lg-kcs" type="submit" id="registerBtn">
-            Create Account
-          </button>
-          <div style="margin-top:16px;text-align:center;font-size:13px;color:var(--text-muted);">
-            Already have an account?
-            <button type="button" onclick="switchTab('login')" style="background:none;border:none;color:var(--brand-primary);font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;padding:0;margin-left:4px;">Sign in</button>
-          </div>
         </form>
       </div>
     </div>
   </div>
 </div>
 
-<script src="/assets/app.js"></script>
+<script src="../assets/app.js"></script>
 <script>
-  function switchTab(name) {
-    document.querySelectorAll('.kcs-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-    document.querySelectorAll('.kcs-tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    document.getElementById('tab-' + name).setAttribute('aria-selected','true');
-    document.getElementById('panel-' + name).classList.add('active');
-  }
-
   function togglePwdVis(inputId, btnId) {
     const inp = document.getElementById(inputId);
     const btn = document.getElementById(btnId);
     if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-    else { inp.type = 'password'; btn.textContent = '👁'; }
+    else { inp.type = 'password'; btn.textContent = '👁️'; }
   }
 
   function setLoading(btn, loading, defaultText) {
@@ -162,12 +107,12 @@
 
   async function redirectIfAuthed() {
     try {
-      const res = await apiGet('/api/auth/me');
+      const res = await apiGet('../api/auth/me');
       const role = res?.data?.role_name;
       if (!role) return;
-      if (role === 'student')          window.location.href = '/pages/student-dashboard.html';
-      if (role === 'department_staff') window.location.href = '/pages/dept-dashboard.html';
-      if (role === 'admin')            window.location.href = '/pages/admin-dashboard.html';
+      if (role === 'student')          window.location.href = '../pages/student-dashboard.html';
+      if (role === 'department_staff') window.location.href = '../pages/dept-dashboard.html';
+      if (role === 'admin')            window.location.href = '../pages/admin-dashboard.html';
     } catch (e) { /* not logged in */ }
   }
 
@@ -176,9 +121,7 @@
     await redirectIfAuthed();
 
     const loginForm    = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
     const loginBtn     = document.getElementById('loginBtn');
-    const registerBtn  = document.getElementById('registerBtn');
 
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -186,17 +129,17 @@
       errEl.style.display = 'none';
       setLoading(loginBtn, true, 'Sign In');
       try {
-        const res = await apiPost('/api/auth/login', {
+        const res = await apiPost('../api/auth/login', {
           email:    document.getElementById('loginEmail').value,
           password: document.getElementById('loginPassword').value,
         });
         const role = res?.role_name;
         if (role === 'student') {
-          window.location.href = '/pages/student-dashboard.html';
+          window.location.href = '../pages/student-dashboard.html';
         } else if (role === 'department_staff') {
-          window.location.href = '/pages/dept-dashboard.html';
+          window.location.href = '../pages/dept-dashboard.html';
         } else if (role === 'admin') {
-          window.location.href = '/pages/admin-dashboard.html';
+          window.location.href = '../pages/admin-dashboard.html';
         } else {
           throw new Error('Unrecognized or missing user role: ' + (role || 'null'));
         }
@@ -207,32 +150,6 @@
       }
     });
 
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const errEl = document.getElementById('registerError');
-      const okEl  = document.getElementById('registerSuccess');
-      errEl.style.display = 'none';
-      okEl.style.display  = 'none';
-      setLoading(registerBtn, true, 'Create Account');
-      try {
-        await apiPost('/api/auth/register', {
-          full_name:        document.getElementById('regFullName').value,
-          admission_number: document.getElementById('regAdmission').value,
-          class_name:       document.getElementById('regClass').value,
-          email:            document.getElementById('regEmail').value,
-          password:         document.getElementById('regPassword').value,
-        });
-        okEl.textContent = '✓ Account created successfully! Please sign in.';
-        okEl.style.display = 'block';
-        registerForm.reset();
-        setTimeout(() => switchTab('login'), 1800);
-      } catch (err) {
-        errEl.textContent = err.message || 'Registration failed. Please try again.';
-        errEl.style.display = 'block';
-      } finally {
-        setLoading(registerBtn, false, 'Create Account');
-      }
-    });
   });
 </script>
 </body>

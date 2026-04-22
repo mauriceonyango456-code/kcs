@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Student Feedback – KCS | Kakamega High School</title>
+  <title>Student Feedback &ndash; KCS | Kakamega High School</title>
   <meta name="description" content="Share your clearance experience at Kakamega High School.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="/assets/style.css" rel="stylesheet">
+  <link href="../assets/style.css" rel="stylesheet">
 </head>
 <body>
 <div class="kcs-wrapper">
@@ -16,15 +16,15 @@
   <nav class="kcs-nav">
     <div class="container">
       <div class="kcs-nav-inner">
-        <a class="kcs-logo" href="/pages/student-clearance.html">
+        <a class="kcs-logo" href="../pages/student-clearance.html">
           <div class="kcs-logo-badge">KCS</div>
           <div class="kcs-logo-text">
             <span class="kcs-logo-title">KCS Clearance</span>
             <span class="kcs-logo-sub">Kakamega High School</span>
           </div>
         </a>
-        <div class="kcs-nav-actions">
-          <a href="/pages/student-clearance.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">← Clearance</a>
+        <div class="kcs-nav-actions"><a href="../pages/index.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs" style="text-decoration:none;">&#127969; Home</a>
+          <a href="../pages/student-clearance.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">&larr; Clearance</a>
           <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
         </div>
       </div>
@@ -41,10 +41,10 @@
     <div class="kcs-card mb-20">
       <div class="kcs-card-body">
         <div style="display:flex;align-items:center;gap:14px;">
-          <div id="statusIconWrap" style="font-size:32px;">⏳</div>
+          <div id="statusIconWrap" style="font-size:32px;">&#8987;</div>
           <div>
             <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Your Clearance Status</div>
-            <div id="overallStatus" style="font-size:18px;font-weight:700;color:var(--text-primary);">Loading…</div>
+            <div id="overallStatus" style="font-size:18px;font-weight:700;color:var(--text-primary);">Loading&hellip;</div>
           </div>
         </div>
       </div>
@@ -62,11 +62,11 @@
             <div class="kcs-form-group">
               <label class="kcs-label">Rating</label>
               <div style="display:flex;gap:6px;font-size:36px;flex-direction:row;margin-bottom:4px;" id="starRow">
-                <span class="star-btn" data-val="1" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="1 – Very Poor">★</span>
-                <span class="star-btn" data-val="2" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="2 – Poor">★</span>
-                <span class="star-btn" data-val="3" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="3 – Fair">★</span>
-                <span class="star-btn" data-val="4" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="4 – Good">★</span>
-                <span class="star-btn" data-val="5" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="5 – Excellent">★</span>
+                <span class="star-btn" data-val="1" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="1 &ndash; Very Poor">&#9733;</span>
+                <span class="star-btn" data-val="2" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="2 &ndash; Poor">&#9733;</span>
+                <span class="star-btn" data-val="3" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="3 &ndash; Fair">&#9733;</span>
+                <span class="star-btn" data-val="4" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="4 &ndash; Good">&#9733;</span>
+                <span class="star-btn" data-val="5" style="cursor:pointer;color:rgba(255,255,255,0.15);transition:all 0.15s;user-select:none;" title="5 &ndash; Excellent">&#9733;</span>
               </div>
               <div id="ratingLabel" style="font-size:13px;color:var(--text-muted);min-height:20px;"></div>
               <input type="hidden" id="ratingVal" value="">
@@ -74,7 +74,7 @@
 
             <div class="kcs-form-group">
               <label class="kcs-label" for="comment">Comment <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
-              <textarea class="kcs-textarea" id="comment" rows="5" placeholder="Tell us about your clearance experience — what went well, what could be improved…"></textarea>
+              <textarea class="kcs-textarea" id="comment" rows="5" placeholder="Tell us about your clearance experience &mdash; what went well, what could be improved&hellip;"></textarea>
             </div>
 
             <div id="feedbackMsg" style="margin-bottom:16px;"></div>
@@ -88,10 +88,10 @@
     <div id="feedbackDisabledMsg" style="display:none;">
       <div class="kcs-card" style="border-color:rgba(245,158,11,0.25);">
         <div class="kcs-card-body" style="text-align:center;padding:40px 24px;">
-          <div style="font-size:40px;margin-bottom:12px;">🔒</div>
+          <div style="font-size:40px;margin-bottom:12px;">&#128274;</div>
           <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Feedback Not Available Yet</div>
           <div style="font-size:14px;color:var(--text-muted);">Feedback can only be submitted after your clearance is fully approved by all departments.</div>
-          <a href="/pages/student-clearance.html" class="btn-kcs btn-outline-kcs" style="display:inline-flex;margin-top:20px;">View Clearance Status →</a>
+          <a href="../pages/student-clearance.html" class="btn-kcs btn-outline-kcs" style="display:inline-flex;margin-top:20px;">View Clearance Status &rarr;</a>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@
   </div>
 </div>
 
-<script src="/assets/app.js"></script>
+<script src="../assets/app.js"></script>
 <script>
   let requestId = null;
   let selectedRating = 0;
@@ -125,14 +125,14 @@
   }
 
   async function refresh() {
-    const res  = await apiGet('/api/student/clearance-status');
+    const res  = await apiGet('../api/student/clearance-status');
     const data = res.data;
     const statusEl = document.getElementById('overallStatus');
     const iconEl   = document.getElementById('statusIconWrap');
 
     if (!data) {
       statusEl.textContent = 'No clearance request found';
-      iconEl.textContent   = '📋';
+      iconEl.textContent   = '\u1F4DC';
       document.getElementById('feedbackDisabledMsg').style.display = 'block';
       return;
     }
@@ -141,11 +141,11 @@
     statusEl.textContent = data.overall_status;
 
     if (data.overall_status === 'Cleared') {
-      iconEl.textContent = '✅';
+      iconEl.textContent = '\u2705';
       statusEl.style.color = '#34d399';
       document.getElementById('feedbackFormWrap').style.display = 'block';
     } else {
-      iconEl.textContent = '⏳';
+      iconEl.textContent = '\u23F3';
       document.getElementById('feedbackDisabledMsg').style.display = 'block';
     }
   }
@@ -177,15 +177,15 @@
       }
 
       const btn = document.getElementById('submitFeedbackBtn');
-      btn.disabled = true; btn.textContent = 'Submitting…';
+      btn.disabled = true; btn.textContent = 'Submitting&hellip;';
 
       try {
-        await apiPost('/api/feedback/submit', {
+        await apiPost('../api/feedback/submit', {
           request_id: requestId,
           rating,
           comment: document.getElementById('comment').value || null,
         });
-        msgEl.innerHTML = '<div class="kcs-alert kcs-alert-success">🎉 Thank you! Your feedback has been submitted successfully.</div>';
+        msgEl.innerHTML = '<div class="kcs-alert kcs-alert-success">&#127881; Thank you! Your feedback has been submitted successfully.</div>';
         document.getElementById('feedbackForm').reset();
         selectedRating = 0;
         paintStars(0, 0);
@@ -202,7 +202,7 @@
       await refresh();
     } catch (e) {
       alert('Session expired. Please login again.');
-      window.location.href = '/pages/login.html';
+      window.location.href = '../pages/login.html';
     }
   });
 </script>

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Clearance Certificate – KCS | Kakamega High School</title>
+  <title>Clearance Certificate &ndash; KCS | Kakamega High School</title>
   <meta name="description" content="Official clearance certificate from Kakamega High School.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="/assets/style.css" rel="stylesheet">
+  <link href="../assets/style.css" rel="stylesheet">
   <style>
-    /* ── Screen styles ────────────────────────────── */
+    /* &mdash;&mdash; Screen styles &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
     .cert-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:28px;flex-wrap:wrap;}
     .cert-paper{
       background:#fff;color:#1a1a2e;border-radius:16px;
@@ -35,7 +35,7 @@
     .cert-watermark{text-align:center;font-size:11px;color:#94a3b8;margin-top:32px;letter-spacing:.06em;}
     .cert-ref{text-align:right;font-size:11px;color:#94a3b8;margin-top:6px;}
 
-    /* ── Print overrides ──────────────────────────── */
+    /* &mdash;&mdash; Print overrides &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
     @media print {
       body{background:#fff!important;}
       .kcs-wrapper,.container{background:none!important;}
@@ -50,7 +50,7 @@
   <nav class="kcs-nav">
     <div class="container">
       <div class="kcs-nav-inner">
-        <a class="kcs-logo" href="#">
+        <a class="kcs-logo" href="../pages/login.html" title="Go to Dashboard/Home">
           <div class="kcs-logo-badge">KCS</div>
           <div class="kcs-logo-text">
             <span class="kcs-logo-title">KCS Clearance</span>
@@ -58,7 +58,8 @@
           </div>
         </a>
         <div class="kcs-nav-actions">
-          <a href="/pages/student-dashboard.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">← Dashboard</a>
+          <a href="../pages/index.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs" style="text-decoration:none;">&#127969; Home</a>
+          <a href="../pages/student-dashboard.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">&larr; Dashboard</a>
           <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
         </div>
       </div>
@@ -71,18 +72,18 @@
     <!-- Error state -->
     <div id="errorWrap" style="display:none;max-width:540px;margin:60px auto;">
       <div class="kcs-card" style="text-align:center;padding:48px 32px;">
-        <div style="font-size:52px;margin-bottom:16px;">🔒</div>
+        <div style="font-size:52px;margin-bottom:16px;">&#128274;</div>
         <h2 style="color:var(--text-primary);margin-bottom:10px;">Certificate Not Available</h2>
         <p id="errorMsg" style="color:var(--text-muted);font-size:14px;margin-bottom:24px;"></p>
-        <a href="/pages/student-clearance.html" class="btn-kcs btn-primary-kcs">← View My Clearance</a>
+        <a href="../pages/student-clearance.html" class="btn-kcs btn-primary-kcs">&larr; View My Clearance</a>
       </div>
     </div>
 
     <!-- Certificate content -->
     <div id="certWrap" style="display:none;">
       <div class="cert-toolbar">
-        <button class="btn-kcs btn-primary-kcs" onclick="window.print()">🖨️&nbsp; Print / Download PDF</button>
-        <a href="/pages/student-dashboard.html" class="btn-kcs btn-ghost-kcs">← Back to Dashboard</a>
+        <button class="btn-kcs btn-primary-kcs" onclick="window.print()">&#128424;&nbsp; Print / Download PDF</button>
+        <a href="../pages/student-dashboard.html" class="btn-kcs btn-ghost-kcs">&larr; Back to Dashboard</a>
         <span style="font-size:12px;color:var(--text-muted);">Tip: in the print dialog choose "Save as PDF" to download.</span>
       </div>
 
@@ -92,27 +93,27 @@
           <div class="cert-badge">KHS</div>
           <div>
             <div class="cert-school-name">Kakamega High School</div>
-            <div class="cert-school-sub">P.O. Box 376 – 50100, Kakamega, Kenya &nbsp;|&nbsp; clearance.kcs.ac.ke</div>
+            <div class="cert-school-sub">P.O. Box 376 &ndash; 50100, Kakamega, Kenya &nbsp;|&nbsp; clearance.kcs.ac.ke</div>
           </div>
         </div>
 
         <div class="cert-title">Certificate of Clearance</div>
-        <div class="cert-subtitle">Academic Clearance Document – Kakamega High School</div>
+        <div class="cert-subtitle">Academic Clearance Document &ndash; Kakamega High School</div>
         <div class="cert-divider"></div>
 
         <div class="cert-body">
           <p>This is to certify that:</p>
           <p>
-            <strong id="certName">—</strong><br>
-            Admission Number: <strong id="certAdm">—</strong> &nbsp;|&nbsp; Class: <strong id="certClass">—</strong><br>
-            Email: <strong id="certEmail">—</strong>
+            <strong id="certName">&mdash;</strong><br>
+            Admission Number: <strong id="certAdm">&mdash;</strong> &nbsp;|&nbsp; Class: <strong id="certClass">&mdash;</strong><br>
+            Email: <strong id="certEmail">&mdash;</strong>
           </p>
           <p>
             Has successfully completed all required clearance procedures for the academic year
             <strong>2025/2026</strong> and is hereby declared <strong>fully cleared</strong>
             by all relevant departments of Kakamega High School.
           </p>
-          <p>Date of Clearance: <strong id="certDate">—</strong></p>
+          <p>Date of Clearance: <strong id="certDate">&mdash;</strong></p>
         </div>
 
         <table class="cert-depts">
@@ -138,30 +139,30 @@
           </div>
         </div>
 
-        <div class="cert-watermark">OFFICIAL DOCUMENT — KAKAMEGA HIGH SCHOOL — CLEARANCE MANAGEMENT SYSTEM</div>
+        <div class="cert-watermark">OFFICIAL DOCUMENT &mdash; KAKAMEGA HIGH SCHOOL &mdash; CLEARANCE MANAGEMENT SYSTEM</div>
         <div class="cert-ref" id="certRef"></div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="/assets/app.js"></script>
+<script src="../assets/app.js"></script>
 <script>
   function fmtDate(str) {
-    if (!str) return '—';
+    if (!str) return '&mdash;';
     const d = new Date(str);
     return isNaN(d) ? str : d.toLocaleDateString('en-KE', {year:'numeric', month:'long', day:'numeric'});
   }
 
   async function loadCertificate() {
     try {
-      const res  = await apiGet('/api/student/clearance-certificate');
+      const res  = await apiGet('../api/student/clearance-certificate');
       const data = res.data;
 
-      document.getElementById('certName').textContent  = data.full_name || '—';
-      document.getElementById('certAdm').textContent   = data.admission_number || '—';
-      document.getElementById('certClass').textContent = data.class_name || '—';
-      document.getElementById('certEmail').textContent = data.email || '—';
+      document.getElementById('certName').textContent  = data.full_name || '&mdash;';
+      document.getElementById('certAdm').textContent   = data.admission_number || '&mdash;';
+      document.getElementById('certClass').textContent = data.class_name || '&mdash;';
+      document.getElementById('certEmail').textContent = data.email || '&mdash;';
       document.getElementById('certDate').textContent  = fmtDate(data.cleared_at);
       document.getElementById('certRef').textContent   = 'Ref: KHS-CLR-' + (data.request_id || '').toString().padStart(5,'0') + ' | Generated: ' + new Date().toLocaleDateString('en-KE');
 
@@ -171,8 +172,8 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="color:#64748b;">${i+1}</td>
-          <td style="font-weight:600;">${d.department_name || '—'}</td>
-          <td><span class="tick">✓ Approved</span></td>
+          <td style="font-weight:600;">${d.department_name || '&mdash;'}</td>
+          <td><span class="tick">&check; Approved</span></td>
           <td>${fmtDate(d.updated_at)}</td>
         `;
         tbody.appendChild(tr);
@@ -194,7 +195,7 @@
       await loadCertificate();
     } catch (e) {
       alert('Session expired. Please login again.');
-      window.location.href = '/pages/login.html';
+      window.location.href = '../pages/login.html';
     }
   });
 </script>

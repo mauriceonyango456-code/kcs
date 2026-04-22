@@ -7,6 +7,13 @@ declare(strict_types=1);
  */
 
 spl_autoload_register(function (string $class) {
+  if (str_starts_with($class, 'PHPMailer\\PHPMailer\\')) {
+    $relative = substr($class, strlen('PHPMailer\\PHPMailer\\'));
+    $path = __DIR__ . '/PHPMailer/' . str_replace('\\', '/', $relative) . '.php';
+    if (is_file($path)) require_once $path;
+    return;
+  }
+
   $prefix = 'KCS\\';
   if (!str_starts_with($class, $prefix)) {
     return;

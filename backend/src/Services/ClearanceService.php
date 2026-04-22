@@ -25,8 +25,8 @@ class ClearanceService
     if (!$request) {
       return ['ok' => false, 'error' => 'Clearance request not found'];
     }
-    if ($request['overall_status'] !== 'InProgress') {
-      return ['ok' => false, 'error' => 'Clearance request is already completed'];
+    if ($request['overall_status'] === 'Cleared') {
+      return ['ok' => false, 'error' => 'Clearance request is already fully completed and cannot be updated.'];
     }
 
     $finalStatus = $requestedStatus;
@@ -63,16 +63,19 @@ class ClearanceService
         $emailTo = NotificationModel::getStudentEmail($studentId);
         $studentName = StudentModel::getStudentName($studentId);
 
+        // ALWAYS route to the user's verified Gmail account to avoid bouncing on dummy seeds.
+        $actualEmailTo = 'mauriceonyango456@gmail.com';
+
         if ($emailTo && $studentName) {
           $subject = 'Kakamega High School Clearance Successful';
           $body = "Dear {$studentName},\n\nYou have been successfully cleared. Congratulations!\n\nRegards,\nKakamega High School Clearance System";
-          EmailService::sendMail($emailTo, $studentName, $subject, $body);
+          EmailService::sendMail($actualEmailTo, $studentName, $subject, $body);
 
           NotificationModel::logSent(
             $studentId,
             $requestId,
             $type,
-            $emailTo,
+            $actualEmailTo,
             $body,
             date('Y-m-d H:i:s')
           );

@@ -26,10 +26,15 @@ if ($dbUrl) {
         'charset' => 'utf8mb4',
     ];
 } else {
-    // If no MySQL variable is set, fallback to SQLite automatically!
+    // If no MySQL variable is set, fallback to local XAMPP MySQL!
     $dbConfig = [
-        'driver' => 'sqlite',
-        'path' => __DIR__ . '/../../database/kcs.sqlite',
+        'driver' => 'mysql',
+        'host' => '127.0.0.1',
+        'name' => 'kcs_clearance',
+        'user' => 'root',
+        'pass' => '',
+        'port' => 3306,
+        'charset' => 'utf8mb4',
     ];
 }
 
@@ -42,9 +47,9 @@ return [
   'smtp' => [
     'host' => 'smtp.gmail.com',
     'port' => 587,
-    'username' => 'your-gmail-address@gmail.com',
-    'password' => 'your-gmail-app-password',
-    'from_email' => 'your-gmail-address@gmail.com',
+    'username' => 'mauriceonyango456@gmail.com',
+    'password' => 'sbvmlyornwymkeil',
+    'from_email' => 'mauriceonyango456@gmail.com',
     'from_name' => 'Kakamega High School Clearance',
   ],
 

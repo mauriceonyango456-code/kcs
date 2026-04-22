@@ -43,14 +43,13 @@ class FeedbackModel
     ');
     $summary = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $stmt2 = $pdo->prepare('
-      SELECT f.rating, f.comment, f.created_at, s.full_name
+    $stmt2 = $pdo->query('
+      SELECT f.rating, f.comment, f.created_at, s.full_name, s.admission_number
       FROM feedback f
       JOIN students s ON s.student_id = f.student_id
       ORDER BY f.created_at DESC
-      LIMIT ?
+      LIMIT ' . (int)$limitComments . '
     ');
-    $stmt2->execute([$limitComments]);
     $comments = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
     return [

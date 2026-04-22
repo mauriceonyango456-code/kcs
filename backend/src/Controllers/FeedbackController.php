@@ -61,7 +61,7 @@ class FeedbackController
   {
     AuthCore::requireRole(['admin']);
     $data = FeedbackModel::getAdminAnalytics(20);
-    Response::json(['ok' => true, 'analytics' => $data]);
+    Response::json(['ok' => true, 'analytics' => $data, 'data' => $data]);
   }
 }
 

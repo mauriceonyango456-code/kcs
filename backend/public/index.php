@@ -36,7 +36,9 @@ $router->add('GET', '/api/department/students-progress', [DashboardController::c
 
 // Admin Dashboards & Feedback
 $router->add('GET', '/api/admin/dashboard-progress', [DashboardController::class, 'adminProgressByDepartment']);
+$router->add('GET', '/api/admin/dashboard/stats',    [DashboardController::class, 'adminDashboardStats']);
 $router->add('GET', '/api/admin/feedback-analytics', [FeedbackController::class, 'adminAnalytics']);
+$router->add('GET', '/api/admin/feedback/recent',    [FeedbackController::class, 'adminAnalytics']); // Reuse same for now
 
 // Feedback submission
 $router->add('POST', '/api/feedback/submit', [FeedbackController::class, 'submit']);

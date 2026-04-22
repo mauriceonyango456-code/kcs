@@ -19,7 +19,14 @@ class Router
   {
     $method = strtoupper($method);
     $path = parse_url($uri, PHP_URL_PATH) ?: '/';
-    $path = '/' . ltrim($path, '/');
+    
+    // Strip subfolder prefix if running on something like XAMPP (e.g. /kcs/backend/public/api/...)
+    $apiPos = strpos($path, '/api/');
+    if ($apiPos !== false) {
+      $path = substr($path, $apiPos);
+    } else {
+      $path = '/' . ltrim($path, '/');
+    }
 
     // Redirect bare root to the front page.
     if ($path === '/') {

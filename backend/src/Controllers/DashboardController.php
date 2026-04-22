@@ -70,6 +70,37 @@ class DashboardController
     Response::json(['ok' => true, 'departments' => $data]);
   }
 
+  public static function adminDashboardStats(): void
+  {
+    AuthCore::requireRole(['admin']);
+    $depts = ClearanceModel::getAdminProgressByDepartment();
+
+    $pending = 0; $approved = 0; $rejected = 0;
+    foreach ($depts as $d) {
+      $pending += (int)$d['pending_cnt'];
+      $approved += (int)$d['approved_cnt'];
+      $rejected += (int)$d['rejected_cnt'];
+    }
+
+    Response::json([
+      'ok' => true,
+      'data' => [
+        'total_departments' => count($depts),
+        'global_pending'    => $pending,
+        'global_approved'   => $approved,
+        'global_rejected'   => $rejected,
+        'departments'       => array_map(function($d) {
+          return [
+            'name'     => $d['department_name'],
+            'pending'  => (int)$d['pending_cnt'],
+            'approved' => (int)$d['approved_cnt'],
+            'rejected' => (int)$d['rejected_cnt'],
+          ];
+        }, $depts)
+      ]
+    ]);
+  }
+
   public static function studentDashboard(): void
   {
     $auth      = AuthCore::requireRole(['student']);
