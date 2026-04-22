@@ -165,7 +165,7 @@
       const res = await apiGet('/api/auth/me');
       const role = res?.data?.role_name;
       if (!role) return;
-      if (role === 'student')          window.location.href = '/pages/student-clearance.html';
+      if (role === 'student')          window.location.href = '/pages/student-dashboard.html';
       if (role === 'department_staff') window.location.href = '/pages/dept-dashboard.html';
       if (role === 'admin')            window.location.href = '/pages/admin-dashboard.html';
     } catch (e) { /* not logged in */ }
@@ -192,7 +192,7 @@
         });
         const role = res?.role_name;
         if (role === 'student') {
-          window.location.href = '/pages/student-clearance.html';
+          window.location.href = '/pages/student-dashboard.html';
         } else if (role === 'department_staff') {
           window.location.href = '/pages/dept-dashboard.html';
         } else if (role === 'admin') {

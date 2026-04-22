@@ -11,6 +11,7 @@ use KCS\Models\DepartmentModel;
 use KCS\Models\FinancialModel;
 use KCS\Models\StudentModel;
 use KCS\Models\UserModel;
+use PDO;
 
 class AdminController
 {
@@ -172,6 +173,66 @@ class AdminController
     $stmt->execute([$userId, $departmentId]);
 
     Response::json(['ok' => true]);
+  }
+
+  public static function listStudents(): void
+  {
+    AuthCore::requireRole(['admin']);
+    $pdo = Database::pdo();
+    $rows = $pdo->query('
+      SELECT s.student_id, s.full_name, s.admission_number, s.class_name,
+             u.email,
+             COALESCE(f.balance, 0) AS balance,
+             COALESCE(f.fee_amount, 0) AS fee_amount,
+             COALESCE(f.amount_paid, 0) AS amount_paid,
+             f.academic_year, f.term_name
+      FROM students s
+      JOIN users u ON u.user_id = s.user_id
+      LEFT JOIN financial_records f ON f.student_id = s.student_id AND f.is_current = 1
+      ORDER BY s.admission_number
+    ')->fetchAll(PDO::FETCH_ASSOC);
+    Response::json(['ok' => true, 'students' => $rows]);
+  }
+
+  public static function updateBalance(): void
+  {
+    // Finance staff OR admin can update balances
+    $auth = AuthCore::requireRole(['admin', 'department_staff']);
+    $csrf = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+    if (!Csrf::check($csrf ? (string)$csrf : null)) {
+      Response::json(['ok' => false, 'error' => 'Invalid CSRF token'], 403);
+    }
+
+    // If dept_staff, verify they belong to Finance
+    if ((string)$auth['role_name'] === 'department_staff') {
+      $deptId = DepartmentModel::getDepartmentIdByStaffUserId((int)$auth['user_id']);
+      $pdo    = Database::pdo();
+      $row    = $pdo->prepare('SELECT name FROM departments WHERE department_id = ? LIMIT 1');
+      $row->execute([$deptId]);
+      $dept   = $row->fetch(PDO::FETCH_ASSOC);
+      if (!$dept || strtolower((string)$dept['name']) !== 'finance') {
+        Response::json(['ok' => false, 'error' => 'Only Finance department staff may update balances'], 403);
+      }
+    }
+
+    $input         = self::inputJson();
+    $admissionNumber = trim((string)($input['admission_number'] ?? ''));
+    $newBalance      = isset($input['balance']) ? (float)$input['balance'] : null;
+
+    if ($admissionNumber === '' || $newBalance === null) {
+      Response::json(['ok' => false, 'error' => 'admission_number and balance are required'], 422);
+    }
+    if ($newBalance < 0) {
+      Response::json(['ok' => false, 'error' => 'Balance cannot be negative'], 422);
+    }
+
+    $student = StudentModel::getByAdmissionNumber($admissionNumber);
+    if (!$student) {
+      Response::json(['ok' => false, 'error' => 'Student not found'], 404);
+    }
+
+    FinancialModel::updateBalance((int)$student['student_id'], $newBalance);
+    Response::json(['ok' => true, 'message' => 'Balance updated successfully']);
   }
 }
 

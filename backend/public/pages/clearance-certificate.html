@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clearance Certificate – KCS | Kakamega High School</title>
+  <meta name="description" content="Official clearance certificate from Kakamega High School.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/assets/style.css" rel="stylesheet">
+  <style>
+    /* ── Screen styles ────────────────────────────── */
+    .cert-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:28px;flex-wrap:wrap;}
+    .cert-paper{
+      background:#fff;color:#1a1a2e;border-radius:16px;
+      max-width:760px;margin:0 auto;padding:56px 64px;
+      box-shadow:0 20px 60px rgba(0,0,0,.5);
+    }
+    .cert-school{display:flex;align-items:center;gap:18px;border-bottom:3px solid #1e3a5f;padding-bottom:20px;margin-bottom:28px;}
+    .cert-badge{width:64px;height:64px;border-radius:50%;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0;}
+    .cert-school-name{font-size:22px;font-weight:800;color:#1e3a5f;line-height:1.2;}
+    .cert-school-sub{font-size:13px;color:#64748b;}
+    .cert-title{text-align:center;font-size:26px;font-weight:800;color:#1e3a5f;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+    .cert-subtitle{text-align:center;font-size:13px;color:#64748b;margin-bottom:32px;letter-spacing:.06em;text-transform:uppercase;}
+    .cert-divider{width:80px;height:4px;background:#1e3a5f;margin:0 auto 32px;border-radius:2px;}
+    .cert-body{font-size:15px;line-height:1.8;color:#334155;margin-bottom:28px;}
+    .cert-body strong{color:#1e3a5f;}
+    .cert-depts{width:100%;border-collapse:collapse;margin:20px 0 28px;}
+    .cert-depts th{background:#1e3a5f;color:#fff;padding:10px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:left;}
+    .cert-depts td{padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#334155;}
+    .cert-depts tr:last-child td{border-bottom:none;}
+    .cert-depts .tick{color:#16a34a;font-weight:700;font-size:15px;}
+    .cert-signatures{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;}
+    .cert-sig-line{border-top:1.5px solid #94a3b8;padding-top:8px;font-size:12px;color:#64748b;}
+    .cert-watermark{text-align:center;font-size:11px;color:#94a3b8;margin-top:32px;letter-spacing:.06em;}
+    .cert-ref{text-align:right;font-size:11px;color:#94a3b8;margin-top:6px;}
+
+    /* ── Print overrides ──────────────────────────── */
+    @media print {
+      body{background:#fff!important;}
+      .kcs-wrapper,.container{background:none!important;}
+      .kcs-nav,.cert-toolbar,.kcs-page-header{display:none!important;}
+      .cert-paper{box-shadow:none;border-radius:0;padding:32px 48px;max-width:100%;}
+    }
+  </style>
+</head>
+<body>
+<div class="kcs-wrapper">
+  <!-- Navbar (hidden on print) -->
+  <nav class="kcs-nav">
+    <div class="container">
+      <div class="kcs-nav-inner">
+        <a class="kcs-logo" href="#">
+          <div class="kcs-logo-badge">KCS</div>
+          <div class="kcs-logo-text">
+            <span class="kcs-logo-title">KCS Clearance</span>
+            <span class="kcs-logo-sub">Kakamega High School</span>
+          </div>
+        </a>
+        <div class="kcs-nav-actions">
+          <a href="/pages/student-dashboard.html" class="btn-kcs btn-ghost-kcs btn-sm-kcs">← Dashboard</a>
+          <button class="btn-kcs btn-outline-kcs btn-sm-kcs" id="logoutBtn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div id="loadingCert" class="kcs-spinner" style="margin-top:60px;"></div>
+
+    <!-- Error state -->
+    <div id="errorWrap" style="display:none;max-width:540px;margin:60px auto;">
+      <div class="kcs-card" style="text-align:center;padding:48px 32px;">
+        <div style="font-size:52px;margin-bottom:16px;">🔒</div>
+        <h2 style="color:var(--text-primary);margin-bottom:10px;">Certificate Not Available</h2>
+        <p id="errorMsg" style="color:var(--text-muted);font-size:14px;margin-bottom:24px;"></p>
+        <a href="/pages/student-clearance.html" class="btn-kcs btn-primary-kcs">← View My Clearance</a>
+      </div>
+    </div>
+
+    <!-- Certificate content -->
+    <div id="certWrap" style="display:none;">
+      <div class="cert-toolbar">
+        <button class="btn-kcs btn-primary-kcs" onclick="window.print()">🖨️&nbsp; Print / Download PDF</button>
+        <a href="/pages/student-dashboard.html" class="btn-kcs btn-ghost-kcs">← Back to Dashboard</a>
+        <span style="font-size:12px;color:var(--text-muted);">Tip: in the print dialog choose "Save as PDF" to download.</span>
+      </div>
+
+      <!-- The printable certificate -->
+      <div class="cert-paper" id="certPaper">
+        <div class="cert-school">
+          <div class="cert-badge">KHS</div>
+          <div>
+            <div class="cert-school-name">Kakamega High School</div>
+            <div class="cert-school-sub">P.O. Box 376 – 50100, Kakamega, Kenya &nbsp;|&nbsp; clearance.kcs.ac.ke</div>
+          </div>
+        </div>
+
+        <div class="cert-title">Certificate of Clearance</div>
+        <div class="cert-subtitle">Academic Clearance Document – Kakamega High School</div>
+        <div class="cert-divider"></div>
+
+        <div class="cert-body">
+          <p>This is to certify that:</p>
+          <p>
+            <strong id="certName">—</strong><br>
+            Admission Number: <strong id="certAdm">—</strong> &nbsp;|&nbsp; Class: <strong id="certClass">—</strong><br>
+            Email: <strong id="certEmail">—</strong>
+          </p>
+          <p>
+            Has successfully completed all required clearance procedures for the academic year
+            <strong>2025/2026</strong> and is hereby declared <strong>fully cleared</strong>
+            by all relevant departments of Kakamega High School.
+          </p>
+          <p>Date of Clearance: <strong id="certDate">—</strong></p>
+        </div>
+
+        <table class="cert-depts">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Cleared On</th>
+            </tr>
+          </thead>
+          <tbody id="certDeptsTbody"></tbody>
+        </table>
+
+        <div class="cert-signatures">
+          <div>
+            <div style="height:48px;"></div>
+            <div class="cert-sig-line">Principal / Head of School</div>
+          </div>
+          <div>
+            <div style="height:48px;"></div>
+            <div class="cert-sig-line">School Administrator</div>
+          </div>
+        </div>
+
+        <div class="cert-watermark">OFFICIAL DOCUMENT — KAKAMEGA HIGH SCHOOL — CLEARANCE MANAGEMENT SYSTEM</div>
+        <div class="cert-ref" id="certRef"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/app.js"></script>
+<script>
+  function fmtDate(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return isNaN(d) ? str : d.toLocaleDateString('en-KE', {year:'numeric', month:'long', day:'numeric'});
+  }
+
+  async function loadCertificate() {
+    try {
+      const res  = await apiGet('/api/student/clearance-certificate');
+      const data = res.data;
+
+      document.getElementById('certName').textContent  = data.full_name || '—';
+      document.getElementById('certAdm').textContent   = data.admission_number || '—';
+      document.getElementById('certClass').textContent = data.class_name || '—';
+      document.getElementById('certEmail').textContent = data.email || '—';
+      document.getElementById('certDate').textContent  = fmtDate(data.cleared_at);
+      document.getElementById('certRef').textContent   = 'Ref: KHS-CLR-' + (data.request_id || '').toString().padStart(5,'0') + ' | Generated: ' + new Date().toLocaleDateString('en-KE');
+
+      const tbody = document.getElementById('certDeptsTbody');
+      tbody.innerHTML = '';
+      (data.departments || []).forEach((d, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="color:#64748b;">${i+1}</td>
+          <td style="font-weight:600;">${d.department_name || '—'}</td>
+          <td><span class="tick">✓ Approved</span></td>
+          <td>${fmtDate(d.updated_at)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('loadingCert').style.display = 'none';
+      document.getElementById('certWrap').style.display = 'block';
+    } catch (err) {
+      document.getElementById('loadingCert').style.display = 'none';
+      document.getElementById('errorMsg').textContent = err.message || 'Your clearance is not yet complete. Complete all department approvals first.';
+      document.getElementById('errorWrap').style.display = 'block';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCsrfToken();
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    try {
+      await loadCertificate();
+    } catch (e) {
+      alert('Session expired. Please login again.');
+      window.location.href = '/pages/login.html';
+    }
+  });
+</script>
+</body>
+</html>

@@ -38,8 +38,11 @@ async function logout() {
 
 function statusBadge(status) {
   const s = String(status || '');
-  if (s === 'Approved') return '<span class="badge bg-success">Approved</span>';
-  if (s === 'Rejected') return '<span class="badge bg-danger">Rejected</span>';
-  return '<span class="badge bg-warning text-dark">Pending</span>';
+  if (s === 'Approved' || s === 'Cleared')
+    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(52,211,153,.15);color:#34d399;">✅ '+s+'</span>';
+  if (s === 'Rejected')
+    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(248,113,113,.15);color:#f87171;">❌ Rejected</span>';
+  if (s === 'InProgress')
+    return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(99,102,241,.15);color:#818cf8;">🔄 In Progress</span>';
+  return '<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(251,191,36,.15);color:#fbbf24;">⏳ '+( s || 'Pending')+'</span>';
 }
-

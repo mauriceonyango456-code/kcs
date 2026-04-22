@@ -57,5 +57,32 @@ class FinancialModel
       $balance,
     ]);
   }
+
+  public static function updateBalance(int $studentId, float $newBalance): void
+  {
+    $pdo = Database::pdo();
+    // Recalculate amount_paid from fee_amount - new balance
+    $stmt = $pdo->prepare('
+      UPDATE financial_records
+      SET balance = ?,
+          amount_paid = fee_amount - ?
+      WHERE student_id = ? AND is_current = 1
+    ');
+    $stmt->execute([$newBalance, $newBalance, $studentId]);
+  }
+
+  public static function getFullRecord(int $studentId): ?array
+  {
+    $pdo = Database::pdo();
+    $stmt = $pdo->prepare('
+      SELECT *
+      FROM financial_records
+      WHERE student_id = ? AND is_current = 1
+      LIMIT 1
+    ');
+    $stmt->execute([$studentId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ?: null;
+  }
 }
 

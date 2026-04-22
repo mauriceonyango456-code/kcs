@@ -5,11 +5,13 @@ namespace KCS\Controllers;
 
 use KCS\Core\Auth as AuthCore;
 use KCS\Core\Csrf;
+use KCS\Core\Database;
 use KCS\Core\Response;
 use KCS\Models\ClearanceModel;
 use KCS\Models\DepartmentModel;
 use KCS\Models\StudentModel;
 use KCS\Services\ClearanceService;
+use PDO;
 
 class ClearanceController
 {
@@ -110,6 +112,47 @@ class ClearanceController
     }
 
     Response::json($result);
+  }
+
+  public static function clearanceCertificate(): void
+  {
+    $auth      = AuthCore::requireRole(['student']);
+    $studentId = (int)($auth['student_id'] ?? 0);
+    if ($studentId <= 0) {
+      Response::json(['ok' => false, 'error' => 'Student profile not found'], 400);
+    }
+
+    $student = StudentModel::getByUserId((int)$auth['user_id']);
+    if (!$student) {
+      Response::json(['ok' => false, 'error' => 'Student not found'], 404);
+    }
+
+    $latest = StudentModel::getLatestRequest($studentId);
+    if (!$latest || (string)$latest['overall_status'] !== 'Cleared') {
+      Response::json(['ok' => false, 'error' => 'Not yet cleared', 'status' => $latest['overall_status'] ?? 'None'], 403);
+    }
+
+    // Get email
+    $pdo   = Database::pdo();
+    $uStmt = $pdo->prepare('SELECT email FROM users WHERE user_id = ? LIMIT 1');
+    $uStmt->execute([(int)$auth['user_id']]);
+    $uRow  = $uStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Get department sign-offs
+    $statuses = ClearanceModel::getStatusesByRequest((int)$latest['request_id']);
+
+    Response::json([
+      'ok' => true,
+      'data' => [
+        'full_name'        => $student['full_name'],
+        'admission_number' => $student['admission_number'],
+        'class_name'       => $student['class_name'],
+        'email'            => $uRow ? $uRow['email'] : '',
+        'cleared_at'       => $latest['completed_at'] ?? $latest['submitted_at'],
+        'request_id'       => (int)$latest['request_id'],
+        'departments'      => $statuses,
+      ],
+    ]);
   }
 }
 

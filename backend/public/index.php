@@ -42,11 +42,17 @@ $router->add('GET', '/api/admin/feedback-analytics', [FeedbackController::class,
 $router->add('POST', '/api/feedback/submit', [FeedbackController::class, 'submit']);
 
 // Admin staff / configuration
-$router->add('GET', '/api/admin/departments', [AdminController::class, 'listDepartments']);
+$router->add('GET',  '/api/admin/departments', [AdminController::class, 'listDepartments']);
 $router->add('POST', '/api/admin/departments/create', [AdminController::class, 'createDepartment']);
 $router->add('POST', '/api/admin/create-department-staff', [AdminController::class, 'createDepartmentStaff']);
 $router->add('POST', '/api/admin/students/create', [AdminController::class, 'createStudent']);
 $router->add('POST', '/api/admin/financial/set-current', [AdminController::class, 'setCurrentFinancialRecord']);
+$router->add('GET',  '/api/admin/students', [AdminController::class, 'listStudents']);
+$router->add('POST', '/api/admin/financial/update-balance', [AdminController::class, 'updateBalance']);
+
+// Student Dashboard & Certificate
+$router->add('GET', '/api/student/dashboard', [DashboardController::class, 'studentDashboard']);
+$router->add('GET', '/api/student/clearance-certificate', [ClearanceController::class, 'clearanceCertificate']);
 
 try {
   $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

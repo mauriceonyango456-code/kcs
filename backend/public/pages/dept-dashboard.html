@@ -9,6 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="/assets/style.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .balance-chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+    .balance-ok{background:rgba(52,211,153,.15);color:#34d399;}
+    .balance-warn{background:rgba(251,191,36,.15);color:#fbbf24;}
+    .balance-danger{background:rgba(248,113,113,.15);color:#f87171;}
+    .balance-form{display:flex;gap:6px;align-items:center;margin-top:8px;}
+    .balance-form input{flex:1;padding:6px 10px;border-radius:8px;border:1px solid var(--border-subtle);background:rgba(255,255,255,.07);color:var(--text-primary);font-size:13px;min-width:0;}
+    .balance-form button{padding:6px 12px;border-radius:8px;font-size:13px;font-weight:600;background:var(--gradient-brand);border:none;color:#fff;cursor:pointer;white-space:nowrap;}
+    .balance-form button:disabled{opacity:.6;cursor:not-allowed;}
+  </style>
 </head>
 <body>
 <div class="kcs-wrapper">
@@ -35,7 +45,7 @@
   <div class="container">
     <div class="kcs-page-header">
       <h1 class="kcs-page-title">Department Dashboard</h1>
-      <p class="kcs-page-subtitle">Review and approve/reject student clearance requests. Financial gate is automatic.</p>
+      <p class="kcs-page-subtitle" id="deptSubtitle">Review and approve/reject student clearance requests.</p>
     </div>
 
     <!-- Stats + Chart row -->
@@ -51,36 +61,35 @@
         </div>
       </div>
 
-      <!-- Stat + Rule Card -->
+      <!-- Stat cards -->
       <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="kcs-stat-card">
           <div class="kcs-stat-icon warning">⏳</div>
-          <div>
-            <div class="kcs-stat-value" id="statPending">—</div>
-            <div class="kcs-stat-label">Pending</div>
-          </div>
+          <div><div class="kcs-stat-value" id="statPending">—</div><div class="kcs-stat-label">Pending</div></div>
         </div>
         <div class="kcs-stat-card">
           <div class="kcs-stat-icon success">✅</div>
-          <div>
-            <div class="kcs-stat-value" id="statApproved">—</div>
-            <div class="kcs-stat-label">Approved</div>
-          </div>
+          <div><div class="kcs-stat-value" id="statApproved">—</div><div class="kcs-stat-label">Approved</div></div>
         </div>
         <div class="kcs-stat-card">
           <div class="kcs-stat-icon danger">❌</div>
-          <div>
-            <div class="kcs-stat-value" id="statRejected">—</div>
-            <div class="kcs-stat-label">Rejected</div>
-          </div>
+          <div><div class="kcs-stat-value" id="statRejected">—</div><div class="kcs-stat-label">Rejected</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Financial Rule Banner -->
+    <!-- Financial Gate Banner -->
     <div class="kcs-alert kcs-alert-warning mb-20" style="display:flex;align-items:center;gap:10px;">
       <span style="font-size:18px;">⚠️</span>
       <span><strong>Financial Gate Active:</strong> If a student has an outstanding fee balance &gt; 0, the system will automatically deny approval regardless of your decision.</span>
+    </div>
+
+    <!-- Finance-only balance update banner -->
+    <div id="financeBanner" style="display:none;" class="mb-20">
+      <div class="kcs-alert" style="background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25);display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">💰</span>
+        <span><strong>Finance Department:</strong> Use the balance controls below to clear or update student fee balances. Changes take effect immediately.</span>
+      </div>
     </div>
 
     <!-- Students Table -->
@@ -102,8 +111,8 @@
 
         <div id="studentsTableWrap" style="display:none;">
           <div class="kcs-table-wrap">
-            <table class="kcs-table">
-              <thead>
+            <table class="kcs-table" id="studentsTable">
+              <thead id="studentsTableHead">
                 <tr>
                   <th>Student</th>
                   <th>Admission No.</th>
@@ -127,7 +136,20 @@
 <script src="/assets/app.js"></script>
 <script>
   let deptId = null;
+  let deptName = '';
   let chartInstance = null;
+  const isFinance = () => deptName.toLowerCase() === 'finance';
+
+  function fmt(n) {
+    return 'KSh ' + Number(n).toLocaleString('en-KE', {minimumFractionDigits:2});
+  }
+
+  function balanceChip(bal) {
+    const b = parseFloat(bal);
+    if (b <= 0) return `<span class="balance-chip balance-ok">KSh 0.00 ✓</span>`;
+    if (b <= 5000) return `<span class="balance-chip balance-warn">${fmt(b)}</span>`;
+    return `<span class="balance-chip balance-danger">${fmt(b)}</span>`;
+  }
 
   function renderChart(counts) {
     const ctx = document.getElementById('deptChart');
@@ -163,14 +185,31 @@
 
     const res      = await apiGet('/api/department/students-progress');
     deptId         = res.department_id;
+    deptName       = res.department_name || '';
     const counts   = res.counts   || {};
-    const students = res.students || [];
+    const students = res.students  || [];
 
-    document.getElementById('deptLabel').textContent  = 'Dept #' + deptId;
+    document.getElementById('deptLabel').textContent   = deptName || ('Dept #' + deptId);
     document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
     document.getElementById('statPending').textContent  = counts.Pending  || 0;
     document.getElementById('statApproved').textContent = counts.Approved || 0;
     document.getElementById('statRejected').textContent = counts.Rejected || 0;
+
+    // Finance-specific UI
+    if (isFinance()) {
+      document.getElementById('financeBanner').style.display = 'block';
+      document.getElementById('deptSubtitle').textContent =
+        'Finance Department – Review clearance requests and update student fee balances.';
+      // Add Fee Balance column header
+      const headerRow = document.getElementById('studentsTableHead').querySelector('tr');
+      if (!document.getElementById('balanceColHeader')) {
+        const th = document.createElement('th');
+        th.id = 'balanceColHeader';
+        th.textContent = 'Fee Balance (KSh)';
+        // Insert before Decision
+        headerRow.insertBefore(th, headerRow.lastElementChild);
+      }
+    }
 
     renderChart(counts);
     document.getElementById('loadingStudents').style.display = 'none';
@@ -187,15 +226,32 @@
       const tr         = document.createElement('tr');
       const requestId  = st.request_id;
       const deptStatus = st.dept_status || 'Pending';
+      const admNum     = st.admission_number || '—';
+      const feeBalance = st.fee_balance ?? 0;
+
+      let financeCell = '';
+      if (isFinance()) {
+        const safeId = admNum.replace(/[^a-z0-9]/gi, '_');
+        financeCell = `
+          <td>
+            ${balanceChip(feeBalance)}
+            <div class="balance-form">
+              <input type="number" id="balInp_${safeId}" value="${feeBalance}" min="0" step="0.01" placeholder="New balance">
+              <button type="button" id="balBtn_${safeId}" onclick="updateBalance('${admNum}', '${safeId}')">Update</button>
+            </div>
+          </td>
+        `;
+      }
 
       tr.innerHTML = `
         <td>
           <div style="font-weight:600;color:var(--text-primary);">${st.full_name}</div>
           <div style="font-size:12px;color:var(--text-muted);">${st.class_name || ''}</div>
         </td>
-        <td style="font-size:13px;">${st.admission_number || '—'}</td>
+        <td style="font-size:13px;">${admNum}</td>
         <td>${statusBadge(st.overall_status)}</td>
         <td>${statusBadge(deptStatus)}</td>
+        ${financeCell}
         <td>
           <div style="display:flex;flex-direction:column;gap:8px;min-width:210px;">
             <select class="kcs-select" data-role="status" style="padding:8px 34px 8px 10px;font-size:13px;">
@@ -231,6 +287,28 @@
     }
 
     document.getElementById('studentsTableWrap').style.display = 'block';
+  }
+
+  async function updateBalance(admNum, safeId) {
+    const inp = document.getElementById('balInp_' + safeId);
+    const btn = document.getElementById('balBtn_' + safeId);
+    const newBalance = parseFloat(inp.value);
+    if (isNaN(newBalance) || newBalance < 0) {
+      alert('Please enter a valid balance (0 or more).');
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await apiPost('/api/admin/financial/update-balance', {
+        admission_number: admNum,
+        balance: newBalance,
+      });
+      document.getElementById('deptMessage').innerHTML = `<div class="kcs-alert kcs-alert-success">✅ Balance updated to ${fmt(newBalance)} for <strong>${admNum}</strong>.</div>`;
+      await refresh();
+    } catch (e) {
+      document.getElementById('deptMessage').innerHTML = `<div class="kcs-alert kcs-alert-danger">❌ ${e.message || 'Failed to update balance.'}</div>`;
+      btn.disabled = false; btn.textContent = 'Update';
+    }
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
